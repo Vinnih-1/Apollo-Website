@@ -150,7 +150,7 @@ const Dashboard = () => {
                     <span className="text-zinc-700 grow hidden md:max-w-[10%] md:block">
                       R$ {payment.price}
                     </span>
-                    <PendingActionsIcon className="grow text-center hidden md:max-w-[10%] md:block fill-amber-400 text-2xl mx-auto" />
+                    <PendingActionsIcon className="grow text-center hidden md:max-w-[10%] md:block !fill-amber-400 text-2xl mx-auto" />
                     <button className="bg-blue-600 text-zinc-200 rounded-lg text-sm p-2 md:hidden">
                       Informações
                     </button>

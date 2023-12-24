@@ -117,7 +117,7 @@ export const Products = () => {
                       {product.description}
                     </span>
                     <button className="hidden md:block mx-auto">
-                      <DeleteForeverIcon className="fill-red-600 hover:fill-sky-600 duration-300" />
+                      <DeleteForeverIcon className="!fill-red-600 hover:!fill-sky-600 duration-300" />
                     </button>
                     <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
                       Editar
