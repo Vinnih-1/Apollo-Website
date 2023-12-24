@@ -3,7 +3,6 @@ import apolloIcon from '@/assets/apollo-icons/apollo-logotipo.svg'
 import { useAuth } from '@/hooks/useAuth'
 import AssignmentIcon from '@mui/icons-material/AssignmentRounded'
 import CloseIcon from '@mui/icons-material/CloseRounded'
-import GroupIcon from '@mui/icons-material/GroupRounded'
 import HomeIcon from '@mui/icons-material/HomeRounded'
 import InventoryIcon from '@mui/icons-material/InventoryRounded'
 import LoyaltyIcon from '@mui/icons-material/LoyaltyRounded'
@@ -124,18 +123,6 @@ export const Sidebar = () => {
               />
               <Link href="/dashboard/sales" className="text-zinc-400">
                 Vendas
-              </Link>
-            </div>
-            <div className="flex items-center gap-4 py-4">
-              <GroupIcon
-                className={
-                  location.match('dashboard/buyers')
-                    ? '!fill-blue-600 text-3xl'
-                    : '!fill-zinc-600 text-3xl'
-                }
-              />
-              <Link href="/dashboard/buyers" className="text-zinc-400">
-                Compradores
               </Link>
             </div>
             <div className="flex items-center gap-4 py-4">
