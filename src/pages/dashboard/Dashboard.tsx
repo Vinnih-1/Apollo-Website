@@ -32,18 +32,18 @@ const Dashboard = () => {
           setLoading(false)
         })
         .catch((error) => console.log(error))
+      axios
+        .get(paymentUrl, {
+          headers: {
+            Authorization: 'Bearer ' + validation.token,
+          },
+        })
+        .then((response) => {
+          const payments = response.data as Array<PaymentProps>
+          setPayments(payments)
+        })
+        .catch((error) => console.log(error))
     }
-    axios
-      .get(paymentUrl, {
-        headers: {
-          Authorization: 'Bearer ' + validation.token,
-        },
-      })
-      .then((response) => {
-        const payments = response.data as Array<PaymentProps>
-        setPayments(payments)
-      })
-      .catch((error) => console.log(error))
   }, [validation])
 
   if (loading) {
