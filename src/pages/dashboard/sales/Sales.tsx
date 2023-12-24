@@ -1,13 +1,44 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import CheckCircleIcon from '@mui/icons-material/CheckCircleRounded'
+import axios from 'axios'
 import Image from 'next/image'
-import { DashboardLayout } from '../DashboardLayout'
+import { useEffect, useState } from 'react'
+import { DashboardLayout, PaymentProps } from '../DashboardLayout'
 
 export const Sales = () => {
   const validation = useAuth()
+  const paymentUrl = process.env
+    .NEXT_PUBLIC_DASHBOARD_APPROVED_PAYMENTS as string
+  const [payments, setPayments] = useState<Array<PaymentProps>>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (validation.token !== '') {
+      axios
+        .get(paymentUrl, {
+          headers: {
+            Authorization: 'Bearer ' + validation.token,
+          },
+          params: {
+            status: 'PAYED',
+          },
+        })
+        .then((response) => {
+          const payments = response.data as Array<PaymentProps>
+          setPayments(payments)
+          setLoading(false)
+        })
+        .catch((error) => console.log(error))
+    }
+  }, [validation])
+
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <DashboardLayout>
@@ -40,7 +71,13 @@ export const Sales = () => {
                 Dinheiro movimentado
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold overflow-hidden">
-                R$ 483,51
+                R${' '}
+                {payments
+                  .reduce(
+                    (accumulator, payment) => accumulator + payment.price,
+                    0,
+                  )
+                  .toFixed(2)}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
@@ -67,24 +104,44 @@ export const Sales = () => {
                   Status
                 </span>
               </div>
-              <div className="flex items-center bg-zinc-100 p-4">
-                <span className="grow md:max-w-[26%] text-zinc-500">
-                  viniciusalb10@gmail.com
-                </span>
-                <span className="grow hidden md:block max-w-[26%] overflow-hidden truncate text-zinc-400">
-                  503942222222
-                </span>
-                <span className="grow hidden md:block max-w-[26%] text-zinc-400">
-                  1174052975963029578
-                </span>
-                <span className="grow hidden md:block max-w-[10%] text-blue-600 font-bold">
-                  R$ 5,00
-                </span>
-                <CheckCircleIcon className="grow hidden md:block max-w-[10%] fill-green-400 text-2xl mx-auto" />
-                <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
-                  Informações
-                </button>
-              </div>
+              {payments.length > 0 ? (
+                payments.map((payment, index) => (
+                  <div
+                    className="flex items-center bg-zinc-100 p-4"
+                    key={index}
+                  >
+                    <span className="grow md:max-w-[26%] text-zinc-500">
+                      {payment.payer}
+                    </span>
+                    <span className="grow hidden md:block max-w-[26%] overflow-hidden truncate text-zinc-400">
+                      {payment.id}
+                    </span>
+                    <span className="grow hidden md:block max-w-[26%] text-zinc-400">
+                      {payment.chatId}
+                    </span>
+                    <span className="grow hidden md:block max-w-[10%] text-blue-600 font-bold">
+                      R$ {payment.price}
+                    </span>
+                    <CheckCircleIcon className="grow hidden md:block max-w-[10%] !fill-green-400 text-2xl mx-auto" />
+                    <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
+                      Informações
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center bg-zinc-100 p-4">
+                  <span className="grow md:max-w-[26%] text-zinc-500">-</span>
+                  <span className="grow hidden md:block max-w-[26%] overflow-hidden truncate text-zinc-400">
+                    -
+                  </span>
+                  <span className="grow hidden md:block max-w-[26%] text-zinc-400">
+                    -
+                  </span>
+                  <span className="grow hidden md:block max-w-[10%] text-blue-600 font-bold">
+                    -
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
