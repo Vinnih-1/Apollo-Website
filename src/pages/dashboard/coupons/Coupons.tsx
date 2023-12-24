@@ -1,13 +1,43 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForeverRounded'
+import axios from 'axios'
 import Image from 'next/image'
-import { DashboardLayout } from '../DashboardLayout'
+import { useEffect, useState } from 'react'
+import { CouponProps, DashboardLayout } from '../DashboardLayout'
 
 export const Coupons = () => {
   const validation = useAuth()
+  const paymentUrl = process.env.NEXT_PUBLIC_DASHBOARD_COUPONS as string
+  const [coupons, setCoupons] = useState<Array<CouponProps>>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (validation.token !== '') {
+      axios
+        .get(paymentUrl, {
+          headers: {
+            Authorization: 'Bearer ' + validation.token,
+          },
+          params: {
+            status: 'PAYED',
+          },
+        })
+        .then((response) => {
+          const payments = response.data as Array<CouponProps>
+          setCoupons(payments)
+          setLoading(false)
+        })
+        .catch((error) => console.log(error))
+    }
+  }, [validation])
+
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <DashboardLayout>
@@ -40,7 +70,7 @@ export const Coupons = () => {
                 Total cupons
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold">
-                23
+                {coupons.length}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
@@ -74,26 +104,48 @@ export const Coupons = () => {
                   Deletar
                 </span>
               </div>
-              <div className="flex items-center bg-zinc-100 p-4">
-                <span className="grow max-w-[40%] md:max-w-[26%] text-green-600 font-bold">
-                  NATAL25
-                </span>
-                <span className="grow hidden md:block max-w-[26%] text-zinc-400 font-light text-sm overflow-hidden truncate">
-                  503942222222
-                </span>
-                <span className="grow max-w-[40%] md:max-w-[10%] text-blue-600 font-bold">
-                  25%
-                </span>
-                <span className="grow hidden md:block max-w-[26%] text-red-600 overflow-hidden truncate">
-                  30/12/2023 às 23:59
-                </span>
-                <button className="hidden md:block mx-auto">
-                  <DeleteForeverIcon className="fill-red-600 hover:fill-sky-600 duration-300" />
-                </button>
-                <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
-                  Informações
-                </button>
-              </div>
+              {coupons.length > 0 ? (
+                coupons.map((coupon, index) => (
+                  <div
+                    className="flex items-center bg-zinc-100 p-4"
+                    key={index}
+                  >
+                    <span className="grow max-w-[40%] md:max-w-[26%] text-green-600 font-bold">
+                      {coupon.name}
+                    </span>
+                    <span className="grow hidden md:block max-w-[26%] text-zinc-400 font-light text-sm overflow-hidden truncate">
+                      {coupon.id}
+                    </span>
+                    <span className="grow max-w-[40%] md:max-w-[10%] text-blue-600 font-bold">
+                      {coupon.discount}
+                    </span>
+                    <span className="grow hidden md:block max-w-[26%] text-red-600 overflow-hidden truncate">
+                      {coupon.expirateAt}
+                    </span>
+                    <button className="hidden md:block mx-auto">
+                      <DeleteForeverIcon className="fill-red-600 hover:fill-sky-600 duration-300" />
+                    </button>
+                    <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
+                      Informações
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center bg-zinc-100 p-4">
+                  <span className="grow max-w-[40%] md:max-w-[26%] text-green-600 font-bold">
+                    -
+                  </span>
+                  <span className="grow hidden md:block max-w-[26%] text-zinc-400 font-light text-sm overflow-hidden truncate">
+                    -
+                  </span>
+                  <span className="grow max-w-[40%] md:max-w-[10%] text-blue-600 font-bold">
+                    -
+                  </span>
+                  <span className="grow hidden md:block max-w-[26%] text-red-600 overflow-hidden truncate">
+                    -
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
