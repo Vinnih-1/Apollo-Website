@@ -3,19 +3,38 @@ import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForeverRounded'
+import axios from 'axios'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+
+interface UserProps {
+  email: string
+  authorities: Array<{ authority: string }>
+  service: string
+}
 
 export const Users = () => {
   const validation = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [users, setUsers] = useState<Array<UserProps>>([])
+  const usersUrl = process.env.NEXT_PUBLIC_AUTH_USERS as string
 
   useEffect(() => {
     if (validation.token !== '') {
-      setLoading(false)
+      axios
+        .get(usersUrl, {
+          headers: {
+            Authorization: 'Bearer ' + validation.token,
+          },
+        })
+        .then((response) => {
+          const { content } = response.data
+          setUsers(content as Array<UserProps>)
+          console.log(content as Array<UserProps>)
+          setLoading(false)
+        })
     }
   }, [validation])
 
@@ -59,7 +78,7 @@ export const Users = () => {
                 Usuários cadastrados
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold">
-                583
+                {users.length}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
@@ -74,28 +93,55 @@ export const Users = () => {
             </div>
             <div className="flex flex-col">
               <div className="flex bg-zinc-200 py-2 px-4">
-                <span className="grow max-w-[70%] md:max-w-[33%]">Email</span>
-                <span className="grow hidden md:block max-w-[33%]">
-                  ID do Usuário
+                <span className="grow max-w-[70%] md:max-w-[23%]">Email</span>
+                <span className="grow hidden md:block max-w-[38%]">
+                  Serviço
                 </span>
-                <span className="grow hidden md:block max-w-[33%] text-center">
-                  Deletar
+                <span className="grow hidden md:block max-w-[20%]">
+                  Permissões
+                </span>
+                <span className="grow hidden md:block max-w-[18%] text-center">
+                  Informações
                 </span>
               </div>
-              <div className="flex items-center bg-zinc-100 p-4">
-                <span className="grow text-zinc-700 max-w-[70%] md:max-w-[33%]">
-                  viniciusalb10@gmail.com
-                </span>
-                <span className="grow text-zinc-700 hidden md:block max-w-[33%] overflow-hidden truncate">
-                  6997bdb0-7661-4478-9a33-aad616285ed1
-                </span>
-                <button className="hidden md:block mx-auto">
-                  <DeleteForeverIcon className="fill-red-600 hover:fill-sky-600 duration-300" />
-                </button>
-                <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
-                  Editar
-                </button>
-              </div>
+              {users.length > 0 ? (
+                users.map((user, index) => (
+                  <div
+                    className="flex items-center bg-zinc-100 p-4"
+                    key={index}
+                  >
+                    <span className="grow text-zinc-700 max-w-[70%] md:max-w-[23%]">
+                      {user.email}
+                    </span>
+                    <span className="grow text-zinc-700 hidden md:block max-w-[38%] overflow-hidden truncate">
+                      {user.service}
+                    </span>
+                    <span className="grow text-zinc-700 hidden md:block max-w-[20%] overflow-hidden truncate">
+                      {user.authorities &&
+                        user.authorities.map((role, index) => (
+                          <span key={index} className="text-sm mr-4">
+                            {role.authority.substring(5)}
+                          </span>
+                        ))}
+                    </span>
+                    <button className="py-2 px-4 bg-blue-600 text-zinc-200 rounded-lg max-w-[15%] mx-auto">
+                      Detalhes
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center bg-zinc-100 p-4">
+                  <span className="grow text-zinc-700 max-w-[70%] md:max-w-[23%]">
+                    -
+                  </span>
+                  <span className="grow text-zinc-700 hidden md:block max-w-[38%] overflow-hidden truncate">
+                    -
+                  </span>
+                  <span className="grow text-zinc-700 hidden md:block max-w-[20%] overflow-hidden truncate">
+                    -
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
