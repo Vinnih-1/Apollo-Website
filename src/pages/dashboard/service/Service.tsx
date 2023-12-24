@@ -1,13 +1,40 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettingsRounded'
+import axios from 'axios'
 import Image from 'next/image'
-import { DashboardLayout } from '../DashboardLayout'
+import { useEffect, useState } from 'react'
+import { DashboardLayout, ServiceProps } from '../DashboardLayout'
 
 const Service = () => {
   const validation = useAuth()
+  const serviceUrl = process.env.NEXT_PUBLIC_DASHBOARD_SERVICE as string
+  const [service, setService] = useState<ServiceProps | undefined>()
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (validation.token !== '') {
+      axios
+        .get(serviceUrl, {
+          headers: {
+            Authorization: 'Bearer ' + validation.token,
+          },
+        })
+        .then((response) => {
+          const service = response.data as ServiceProps
+          setService(service)
+          setLoading(false)
+        })
+        .catch((error) => console.log(error))
+    }
+  }, [validation])
+
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <DashboardLayout>
@@ -45,14 +72,14 @@ const Service = () => {
               </span>
               <span className="inline text-zinc-400 font-light text-sm mt-4">
                 Autorizado:{' '}
-                <span className="inline text-green-600 font-bold text-lg">
-                  SIM
+                <span className="inline text-yellow-600 font-bold text-lg">
+                  {service?.discordId !== null ? 'SIM' : 'NÃO'}
                 </span>
               </span>
               <span className="text-zinc-400 text-sm font-light mt-4">
                 Expira em:{' '}
                 <span className="text-red-600 font-light text-sm">
-                  30/12/2023 às 23:59
+                  {service?.expirateAt}
                 </span>
               </span>
               <button className="py-3 bg-green-600 rounded w-40 text-white text-sm mt-4 hover:bg-green-400 duration-300">
@@ -66,7 +93,7 @@ const Service = () => {
                     </span>
                     <div className="w-48 p-3 border border-green-600 rounded-lg overflow-hidden truncate cursor-pointer">
                       <span className="text-sm text-green-200 font-light">
-                        eb99fa0b-5b3c-4058-834e-4861b6d43f31
+                        {service?.id}
                       </span>
                     </div>
                   </div>
@@ -76,7 +103,7 @@ const Service = () => {
                     </span>
                     <div className="w-48 p-3 border text-center border-green-600 rounded-lg overflow-hidden truncate cursor-pointer">
                       <span className="text-sm text-green-200 font-light">
-                        vpx-eek-j5a
+                        {service?.serviceKey}
                       </span>
                     </div>
                   </div>
@@ -88,7 +115,7 @@ const Service = () => {
                     </span>
                     <div className="w-48 p-3 border border-green-600 text-center rounded-lg overflow-hidden truncate cursor-pointer">
                       <span className="text-sm text-green-200 font-light">
-                        viniciusalb10@gmail.com
+                        {service?.owner}
                       </span>
                     </div>
                   </div>
@@ -98,7 +125,7 @@ const Service = () => {
                     </span>
                     <div className="w-48 p-3 border text-center border-green-600 rounded-lg overflow-hidden truncate cursor-pointer">
                       <span className="text-sm text-green-200 font-light">
-                        1148878334831374397
+                        {service?.discordId}
                       </span>
                     </div>
                   </div>
@@ -110,7 +137,7 @@ const Service = () => {
                     </span>
                     <div className="w-48 p-3 border border-green-600 text-center rounded-lg overflow-hidden truncate cursor-pointer">
                       <span className="text-sm text-green-200 font-light">
-                        1180553865800728640
+                        {service?.categoryId}
                       </span>
                     </div>
                   </div>
