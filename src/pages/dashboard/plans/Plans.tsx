@@ -3,18 +3,47 @@ import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
+import axios, { AxiosResponse } from 'axios'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+
+export interface ServiceProps {
+  owner: string
+  id: string
+  serviceKey: string
+  discordId: string
+  categoryId: string
+  createAt: string
+  expirateAt: string
+}
 
 export const Plans = () => {
   const validation = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
+  const [services, setServices] = useState<Array<ServiceProps>>([])
+  const servicesUrl = process.env.NEXT_PUBLIC_DASHBOARD_ALL_SERVICE as string
 
   useEffect(() => {
     if (validation.token !== '') {
-      setLoading(false)
+      axios
+        .get(servicesUrl, {
+          headers: {
+            Authorization: 'Bearer ' + validation.token,
+          },
+          params: {
+            page: 0,
+          },
+        })
+        .then((response: AxiosResponse) => {
+          const { content } = response.data
+          setServices(content as Array<ServiceProps>)
+          setLoading(false)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
   }, [validation])
 
@@ -58,7 +87,7 @@ export const Plans = () => {
                 Planos registrados
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold">
-                113
+                {services.length}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
@@ -81,20 +110,39 @@ export const Plans = () => {
                   Expira em:
                 </span>
               </div>
-              <div className="flex items-center bg-zinc-100 p-4">
-                <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
-                  6997bdb0-7661-4478-9a33-aad616285ed1
-                </span>
-                <span className="grow text-zinc-700 text-sm max-w-[13%] overflow-hidden truncate">
-                  30122003
-                </span>
-                <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
-                  30/12/2023 às 23:59
-                </span>
-                <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm mx-auto">
-                  Informações
-                </button>
-              </div>
+              {services.length > 0 ? (
+                services.map((service, index) => (
+                  <div
+                    className="flex items-center bg-zinc-100 p-4"
+                    key={index}
+                  >
+                    <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
+                      {service.id}
+                    </span>
+                    <span className="grow text-zinc-700 text-sm max-w-[13%] overflow-hidden truncate">
+                      {service.serviceKey}
+                    </span>
+                    <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
+                      {service.expirateAt}
+                    </span>
+                    <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm mx-auto">
+                      Informações
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center bg-zinc-100 p-4">
+                  <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
+                    -
+                  </span>
+                  <span className="grow text-zinc-700 text-sm max-w-[13%] overflow-hidden truncate">
+                    -
+                  </span>
+                  <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
+                    -
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
