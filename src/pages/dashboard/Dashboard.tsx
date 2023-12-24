@@ -4,12 +4,13 @@ import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import PendingActionsIcon from '@mui/icons-material/PendingActions'
 import Image from 'next/image'
+import { DashboardLayout } from './DashboardLayout'
 
 const Dashboard = () => {
   const validation = useAuth()
 
   return (
-    <div>
+    <DashboardLayout>
       <div className="fixed top-0 z-10 lg:static flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
         <a href="#" className="flex gap-4">
           <Image
@@ -148,7 +149,7 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }
 

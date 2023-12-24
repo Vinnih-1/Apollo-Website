@@ -4,12 +4,13 @@ import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForeverRounded'
 import Image from 'next/image'
+import { DashboardLayout } from '../DashboardLayout'
 
 export const Coupons = () => {
   const validation = useAuth()
 
   return (
-    <div>
+    <DashboardLayout>
       <div className="fixed top-0 z-10 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
         <a href="#" className="flex gap-4">
           <Image
@@ -97,7 +98,7 @@ export const Coupons = () => {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }
 

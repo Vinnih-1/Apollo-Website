@@ -7,16 +7,7 @@ import axios, { AxiosResponse } from 'axios'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-
-export interface ServiceProps {
-  owner: string
-  id: string
-  serviceKey: string
-  discordId: string
-  categoryId: string
-  createAt: string
-  expirateAt: string
-}
+import { DashboardLayout, ServiceProps } from '../DashboardLayout'
 
 export const Plans = () => {
   const validation = useAuth()
@@ -57,7 +48,7 @@ export const Plans = () => {
   }
 
   return (
-    <div>
+    <DashboardLayout>
       <div className="fixed top-0 z-10 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
         <a href="#" className="flex gap-4">
           <Image
@@ -147,7 +138,7 @@ export const Plans = () => {
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }
 
