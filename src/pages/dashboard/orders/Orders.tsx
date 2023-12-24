@@ -4,7 +4,7 @@ import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import { PurchaseProps } from '@/hooks/usePurchase'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -19,7 +19,7 @@ export const Orders = () => {
   useEffect(() => {
     if (validation.token !== '') {
       axios
-        .get(ordersUrl, {
+        .get(ordersUrl + 'payments', {
           headers: {
             Authorization: 'Bearer ' + validation.token,
           },
@@ -32,8 +32,22 @@ export const Orders = () => {
           setOrders(content as Array<PurchaseProps>)
           setLoading(false)
         })
+        .catch(() => {
+          setLoading(false)
+        })
     }
   }, [validation])
+
+  const acceptOrder = async (order: PurchaseProps) => {
+    return axios.get(ordersUrl + 'authorize', {
+      headers: {
+        Authorization: 'Bearer ' + validation.token,
+      },
+      params: {
+        externalReference: order.externalReference,
+      },
+    })
+  }
 
   if (loading) {
     return <Loading />
@@ -119,12 +133,24 @@ export const Orders = () => {
                         )}{' '}
                         minuto(s)
                       </span>
-                      <button className="p-2 px-4 md:block hidden bg-green-600 rounded-lg text-zinc-200 text-sm mx-auto">
-                        Aprovar pedido
-                      </button>
-                      <button className="p-2 px-4 md:hidden bg-blue-600 rounded-lg text-zinc-200 text-sm mx-auto">
-                        Detalhes
-                      </button>
+                      <div className="flex gap-2">
+                        <button
+                          className="p-2 px-4 md:block hidden bg-green-600 rounded-lg text-zinc-200 text-sm mx-auto"
+                          onClick={() => {
+                            acceptOrder(order).then(
+                              (response: AxiosResponse) => {
+                                if (response.status === 200)
+                                  console.log(response.data as PurchaseProps)
+                              },
+                            )
+                          }}
+                        >
+                          Aprovar pedido
+                        </button>
+                        <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm mx-auto">
+                          Detalhes
+                        </button>
+                      </div>
                     </div>
                   ))
                 ) : (
