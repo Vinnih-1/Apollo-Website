@@ -1,0 +1,155 @@
+import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
+import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { useAuth } from '@/hooks/useAuth'
+import PendingActionsIcon from '@mui/icons-material/PendingActions'
+import Image from 'next/image'
+
+const Dashboard = () => {
+  const validation = useAuth()
+
+  return (
+    <div>
+      <div className="fixed top-0 z-10 lg:static flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
+        <a href="#" className="flex gap-4">
+          <Image
+            src={discordSmallIcon}
+            width={17}
+            height={17}
+            alt="Icone do Discord"
+          />
+          <span className="text-xs text-white">Atendimento via Discord</span>
+        </a>
+        <a href="#" className="flex gap-4">
+          <Image
+            src={termsSmallIcon}
+            width={17}
+            height={17}
+            alt="Icone dos termos"
+          />
+          <span className="text-xs text-white">Termos e Políticas</span>
+        </a>
+      </div>
+      <div className="flex">
+        <Sidebar />
+        <div className="w-full">
+          <div className="flex flex-wrap items-center justify-center gap-4 max-w-5xl mx-auto mt-12 lg:h-auto lg:flex-row">
+            <div className="bg-zinc-100 w-72 h-28 shadow-xl rounded-xl border border-zinc-200">
+              <h1 className="ml-8 mt-4 text-zinc-400 text-sm font-light">
+                Total produtos
+              </h1>
+              <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold">
+                23
+              </span>
+              <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
+                Há 3 min
+              </span>
+            </div>
+            <div className="bg-zinc-100 w-72 h-28 shadow-xl rounded-xl border border-zinc-200">
+              <h1 className="ml-8 mt-4 text-zinc-400 text-sm font-light">
+                Compradores
+              </h1>
+              <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold">
+                18
+              </span>
+              <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
+                Há 3 min
+              </span>
+            </div>
+            <div className="bg-zinc-100 w-72 h-28 shadow-xl rounded-xl border border-zinc-200">
+              <h1 className="ml-8 mt-4 text-zinc-400 text-sm font-light">
+                Dinheiro movimentado
+              </h1>
+              <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold overflow-hidden">
+                R$ 483,51
+              </span>
+              <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
+                Há 3 min
+              </span>
+            </div>
+          </div>
+          <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
+            <h1 className="font-bold text-xl text-blue-600 p-8">
+              Pagamentos Gerados Recentemente
+            </h1>
+            <div className="flex flex-col">
+              <div className="flex bg-zinc-200 p-4">
+                <span className="grow max-w-[70%] md:max-w-[26%]">
+                  Comprador
+                </span>
+                <span className="grow hidden md:max-w-[26%] md:block">
+                  ID do Produto
+                </span>
+                <span className="grow hidden md:max-w-[26%] md:block">
+                  Chat do Pagamento
+                </span>
+                <span className="grow hidden md:max-w-[10%] md:block">
+                  Preço
+                </span>
+                <span className="grow text-center hidden md:max-w-[10%] md:block">
+                  Status
+                </span>
+              </div>
+              <div className="flex items-center bg-zinc-100 p-4">
+                <span className="text-zinc-700 grow max-w-[70%] md:max-w-[26%] overflow-hidden">
+                  viniciusalb10@gmail.com
+                </span>
+                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block overflow-hidden truncate">
+                  503942222222
+                </span>
+                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block">
+                  1174052975963029578
+                </span>
+                <span className="text-zinc-700 grow hidden md:max-w-[10%] md:block">
+                  R$ 5,00
+                </span>
+                <PendingActionsIcon className="grow text-center hidden md:max-w-[10%] md:block fill-amber-400 text-2xl mx-auto" />
+                <button className="bg-blue-600 text-zinc-200 rounded-lg text-sm p-2 md:hidden">
+                  Informações
+                </button>
+              </div>
+              <div className="flex items-center bg-zinc-100 p-4">
+                <span className="text-zinc-700 grow max-w-[70%] md:max-w-[26%] overflow-hidden">
+                  viniciusalb10@gmail.com
+                </span>
+                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block overflow-hidden truncate">
+                  503942222222
+                </span>
+                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block">
+                  1174052975963029578
+                </span>
+                <span className="text-zinc-700 grow hidden md:max-w-[10%] md:block">
+                  R$ 5,00
+                </span>
+                <PendingActionsIcon className="grow text-center hidden md:max-w-[10%] md:block fill-amber-400 text-2xl mx-auto" />
+                <button className="bg-blue-600 text-zinc-200 rounded-lg text-sm p-2 md:hidden">
+                  Informações
+                </button>
+              </div>
+              <div className="flex items-center bg-zinc-100 p-4">
+                <span className="text-zinc-700 grow max-w-[70%] md:max-w-[26%] overflow-hidden">
+                  viniciusalb10@gmail.com
+                </span>
+                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block overflow-hidden truncate">
+                  503942222222
+                </span>
+                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block">
+                  1174052975963029578
+                </span>
+                <span className="text-zinc-700 grow hidden md:max-w-[10%] md:block">
+                  R$ 5,00
+                </span>
+                <PendingActionsIcon className="grow text-center hidden md:max-w-[10%] md:block fill-amber-400 text-2xl mx-auto" />
+                <button className="bg-blue-600 text-zinc-200 rounded-lg text-sm p-2 md:hidden">
+                  Informações
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Dashboard
