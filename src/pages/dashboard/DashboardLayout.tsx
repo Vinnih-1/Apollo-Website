@@ -10,6 +10,16 @@ export interface ProductProps {
   serviceId: string
 }
 
+export interface CouponProps {
+  id: string
+  name: string
+  serviceId: string
+  discount: number
+  createAt: string
+  expirateAt: string
+  enabled: boolean
+}
+
 export interface PaymentProps {
   id: string
   payer: string
