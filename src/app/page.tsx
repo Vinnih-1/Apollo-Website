@@ -13,7 +13,6 @@ import dataIcon from '@/assets/statistic-icons/data-icon.svg'
 import statisticIcon from '@/assets/statistic-icons/statistic-icon.svg'
 import supportIcon from '@/assets/statistic-icons/support-icon.svg'
 import { Footer } from '@/components/Footer/Footer'
-import { Loading } from '@/components/Loading/Loading'
 import { Navbar } from '@/components/Navbar'
 import { useAuth } from '@/hooks/useAuth'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -22,32 +21,10 @@ import PersonIcon from '@mui/icons-material/Person'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
 export default function Home() {
   const validation = useAuth()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (!validation.loading) {
-      setLoading(false)
-    }
-  }, [validation])
-
-  if (loading) {
-    return <Loading />
-  }
-
-  if (!validation.success) {
-    return (
-      <div className="flex justify-center items-center w-screen h-screen">
-        <span className="text-sm text-zinc-400 font-light">
-          Algo de errado não está certo...
-        </span>
-      </div>
-    )
-  }
 
   return (
     <div>

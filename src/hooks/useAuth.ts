@@ -1,5 +1,4 @@
 import axios, { AxiosError } from 'axios'
-import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export interface ValidationProps {
@@ -12,7 +11,6 @@ export interface ValidationProps {
 }
 
 export const useAuth = (): ValidationProps => {
-  const router = useRouter()
   const validateUrl = process.env.NEXT_PUBLIC_AUTH_VALIDATE as string
   const [validation, setValidation] = useState<ValidationProps>({
     email: '',
@@ -25,17 +23,12 @@ export const useAuth = (): ValidationProps => {
 
   const handleLogout = () => {
     localStorage.removeItem('token')
-    if (window.location.pathname === '/') return
-    router.push('/login')
   }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    const location = window.location.pathname
 
     if (!token) {
-      if (location === '/' || location === '/register') return
-      router.push('/login')
       return
     }
 
