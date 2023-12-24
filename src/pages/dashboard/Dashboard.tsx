@@ -1,13 +1,54 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import PendingActionsIcon from '@mui/icons-material/PendingActions'
+import axios from 'axios'
 import Image from 'next/image'
-import { DashboardLayout } from './DashboardLayout'
+import { useEffect, useState } from 'react'
+import { DashboardLayout, PaymentProps, ServiceProps } from './DashboardLayout'
 
 const Dashboard = () => {
   const validation = useAuth()
+  const serviceUrl = process.env.NEXT_PUBLIC_DASHBOARD_SERVICE as string
+  const paymentUrl = process.env
+    .NEXT_PUBLIC_DASHBOARD_PENDING_PAYMENTS as string
+  const [service, setService] = useState<ServiceProps | undefined>()
+  const [payments, setPayments] = useState<Array<PaymentProps>>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    if (validation.token !== '') {
+      axios
+        .get(serviceUrl, {
+          headers: {
+            Authorization: 'Bearer ' + validation.token,
+          },
+        })
+        .then((response) => {
+          const service = response.data as ServiceProps
+          setService(service)
+          setLoading(false)
+        })
+        .catch((error) => console.log(error))
+    }
+    axios
+      .get(paymentUrl, {
+        headers: {
+          Authorization: 'Bearer ' + validation.token,
+        },
+      })
+      .then((response) => {
+        const payments = response.data as Array<PaymentProps>
+        setPayments(payments)
+      })
+      .catch((error) => console.log(error))
+  }, [validation])
+
+  if (loading) {
+    return <Loading />
+  }
 
   return (
     <DashboardLayout>
@@ -40,7 +81,7 @@ const Dashboard = () => {
                 Total produtos
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold">
-                23
+                {service?.products.length}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
@@ -51,7 +92,7 @@ const Dashboard = () => {
                 Compradores
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold">
-                18
+                {service?.buyers}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
@@ -62,7 +103,7 @@ const Dashboard = () => {
                 Dinheiro movimentado
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold overflow-hidden">
-                R$ 483,51
+                R$ {service?.moneyMoved.toFixed(2)}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
@@ -91,60 +132,46 @@ const Dashboard = () => {
                   Status
                 </span>
               </div>
-              <div className="flex items-center bg-zinc-100 p-4">
-                <span className="text-zinc-700 grow max-w-[70%] md:max-w-[26%] overflow-hidden">
-                  viniciusalb10@gmail.com
-                </span>
-                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block overflow-hidden truncate">
-                  503942222222
-                </span>
-                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block">
-                  1174052975963029578
-                </span>
-                <span className="text-zinc-700 grow hidden md:max-w-[10%] md:block">
-                  R$ 5,00
-                </span>
-                <PendingActionsIcon className="grow text-center hidden md:max-w-[10%] md:block fill-amber-400 text-2xl mx-auto" />
-                <button className="bg-blue-600 text-zinc-200 rounded-lg text-sm p-2 md:hidden">
-                  Informações
-                </button>
-              </div>
-              <div className="flex items-center bg-zinc-100 p-4">
-                <span className="text-zinc-700 grow max-w-[70%] md:max-w-[26%] overflow-hidden">
-                  viniciusalb10@gmail.com
-                </span>
-                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block overflow-hidden truncate">
-                  503942222222
-                </span>
-                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block">
-                  1174052975963029578
-                </span>
-                <span className="text-zinc-700 grow hidden md:max-w-[10%] md:block">
-                  R$ 5,00
-                </span>
-                <PendingActionsIcon className="grow text-center hidden md:max-w-[10%] md:block fill-amber-400 text-2xl mx-auto" />
-                <button className="bg-blue-600 text-zinc-200 rounded-lg text-sm p-2 md:hidden">
-                  Informações
-                </button>
-              </div>
-              <div className="flex items-center bg-zinc-100 p-4">
-                <span className="text-zinc-700 grow max-w-[70%] md:max-w-[26%] overflow-hidden">
-                  viniciusalb10@gmail.com
-                </span>
-                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block overflow-hidden truncate">
-                  503942222222
-                </span>
-                <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block">
-                  1174052975963029578
-                </span>
-                <span className="text-zinc-700 grow hidden md:max-w-[10%] md:block">
-                  R$ 5,00
-                </span>
-                <PendingActionsIcon className="grow text-center hidden md:max-w-[10%] md:block fill-amber-400 text-2xl mx-auto" />
-                <button className="bg-blue-600 text-zinc-200 rounded-lg text-sm p-2 md:hidden">
-                  Informações
-                </button>
-              </div>
+              {payments?.length > 0 ? (
+                payments?.map((payment, index) => (
+                  <div
+                    className="flex items-center bg-zinc-100 p-4"
+                    key={index}
+                  >
+                    <span className="text-zinc-700 grow max-w-[70%] md:max-w-[26%] overflow-hidden">
+                      {payment.payer}
+                    </span>
+                    <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block overflow-hidden truncate">
+                      {payment.productId}
+                    </span>
+                    <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block">
+                      {payment.chatId}
+                    </span>
+                    <span className="text-zinc-700 grow hidden md:max-w-[10%] md:block">
+                      R$ {payment.price}
+                    </span>
+                    <PendingActionsIcon className="grow text-center hidden md:max-w-[10%] md:block fill-amber-400 text-2xl mx-auto" />
+                    <button className="bg-blue-600 text-zinc-200 rounded-lg text-sm p-2 md:hidden">
+                      Informações
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="flex items-center bg-zinc-100 p-4">
+                  <span className="text-zinc-700 grow max-w-[70%] md:max-w-[26%] overflow-hidden">
+                    -
+                  </span>
+                  <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block overflow-hidden truncate">
+                    -
+                  </span>
+                  <span className="text-zinc-700 grow hidden md:max-w-[26%] md:block">
+                    -
+                  </span>
+                  <span className="text-zinc-700 grow hidden md:max-w-[10%] md:block">
+                    -
+                  </span>
+                </div>
+              )}
             </div>
           </div>
         </div>
