@@ -2,6 +2,25 @@ import { useAuth } from '@/hooks/useAuth'
 import axios from 'axios'
 import { ReactNode, useEffect, useState } from 'react'
 
+export interface ProductProps {
+  id: number
+  name: string
+  description: string
+  price: number
+  serviceId: string
+}
+
+export interface PaymentProps {
+  id: string
+  payer: string
+  serviceId: string
+  chatId: string
+  paymentStatus: string
+  paymentIntent: string
+  price: number
+  productId: number
+}
+
 export interface ServiceProps {
   owner: string
   id: string
@@ -10,6 +29,9 @@ export interface ServiceProps {
   categoryId: string
   createAt: string
   expirateAt: string
+  buyers: number
+  moneyMoved: number
+  products: Array<ProductProps>
 }
 
 interface DashboardLayoutProps {
