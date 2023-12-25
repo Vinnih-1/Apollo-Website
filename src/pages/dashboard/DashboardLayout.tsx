@@ -11,13 +11,14 @@ export interface ProductProps {
 }
 
 export interface CouponProps {
-  id: string
+  id?: number
   name: string
-  serviceId: string
+  serviceId?: string
   discount: number
-  createAt: string
-  expirateAt: string
-  enabled: boolean
+  expirateDays: number
+  createAt?: string
+  expirateAt?: string
+  enabled?: boolean
 }
 
 export interface PaymentProps {
