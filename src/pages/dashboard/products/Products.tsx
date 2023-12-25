@@ -1,15 +1,14 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
+import { Modal } from '@/components/Modal'
+import { ModalClose } from '@/components/Modal/ModalClose'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
-import CloseIcon from '@mui/icons-material/CloseRounded'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForeverRounded'
-import { Modal, TextField } from '@mui/material'
 import axios from 'axios'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
-import { NumericFormat } from 'react-number-format'
 import { DashboardLayout, ProductProps } from '../DashboardLayout'
 
 export const Products = () => {
@@ -25,10 +24,6 @@ export const Products = () => {
     serviceId: '',
   })
   const [open, setOpen] = useState(false)
-
-  const handleProductModal = () => {
-    setOpen(!open)
-  }
 
   const createProductPolicy = (product: ProductProps): boolean => {
     if (product.name === '') return false
@@ -144,116 +139,77 @@ export const Products = () => {
                 Produtos criados por você
               </h1>
               <button
-                onClick={() => handleProductModal()}
+                onClick={() => setOpen(!open)}
                 className="text-white text-sm text-light rounded-xl py-3 px-6 bg-green-600 hover:bg-green-500 duration-300"
               >
                 Criar produto
               </button>
-              <Modal
-                open={open}
-                aria-labelledby="parent-modal-title"
-                aria-describedby="parent-modal-description"
-              >
-                <div className="flex justify-center items-center w-screen h-screen">
-                  <div className="relative flex flex-col items-center grow justify-center max-w-sm bg-zinc-100 rounded-lg p-4">
-                    {/* Modal Header */}
-                    <div>
-                      <button onClick={() => handleProductModal()}>
-                        <CloseIcon className="absolute top-2 right-2 !fill-blue-600" />
-                      </button>
-                      <span className="text-lg text-blue-600 font-bold">
-                        Criar um novo produto
-                      </span>
-                    </div>
-                    {/* Modal Body */}
-                    <div className="flex flex-col mt-4 gap-4">
-                      <div className="flex flex-col gap-2 items-center">
-                        <span className="text-zinc-400 text-sm font-light">
-                          Nome do seu Produto
-                        </span>
-                        <TextField
-                          id="outlined-basic"
-                          label="Nome"
-                          variant="outlined"
-                          className="rounded-xl"
-                          value={newProduct?.name}
-                          onChange={(e) =>
-                            setNewProduct((prevState) => ({
-                              ...prevState,
-                              name: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2 items-center">
-                        <span className="text-zinc-400 text-sm font-light">
-                          Descrição do seu Produto
-                        </span>
-                        <TextField
-                          id="outlined-basic"
-                          label="Descrição"
-                          variant="outlined"
-                          className="rounded-xl"
-                          value={newProduct?.description}
-                          onChange={(e) =>
-                            setNewProduct((prevState) => ({
-                              ...prevState,
-                              description: e.target.value,
-                            }))
-                          }
-                        />
-                      </div>
-                      <div className="flex flex-col gap-2 items-center">
-                        <span className="text-zinc-400 text-sm font-light">
-                          Defina um preço para o seu produto
-                        </span>
-                        <NumericFormat
-                          prefix="R$"
-                          thousandSeparator="."
-                          decimalSeparator=","
-                          decimalScale={2}
-                          customInput={TextField}
-                          value={newProduct?.price}
-                          valueIsNumericString={true}
-                          allowNegative={false}
-                          onChange={(e) => {
-                            const number = parseFloat(
-                              e.target.value
-                                .replace(',', '.')
-                                .replace('R$', ''),
-                            )
+              <Modal.Root open={open}>
+                <ModalClose onClick={() => setOpen(!open)} />
+                <Modal.Header title="Criar produto" />
+                <Modal.Body>
+                  <Modal.Input
+                    variant="outlined"
+                    title="Nome do seu Produto"
+                    label="Nome"
+                    value={newProduct?.name}
+                    onChange={(e) =>
+                      setNewProduct((prevState) => ({
+                        ...prevState,
+                        name: e.target.value,
+                      }))
+                    }
+                  />
+                  <Modal.Input
+                    variant="outlined"
+                    title="Descrição do seu Produto"
+                    label="Descrição"
+                    value={newProduct?.description}
+                    onChange={(e) =>
+                      setNewProduct((prevState) => ({
+                        ...prevState,
+                        description: e.target.value,
+                      }))
+                    }
+                  />
+                  <Modal.Numeric
+                    prefix="R$"
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    decimalScale={2}
+                    title="Defina um preço para o seu produto"
+                    value={newProduct?.price}
+                    onChange={(e) => {
+                      const number = parseFloat(
+                        e.target.value.replace(',', '.').replace('R$', ''),
+                      )
 
-                            setNewProduct((prevState) => ({
-                              ...prevState,
-                              price: number,
-                            }))
-                          }}
-                        />
-                      </div>
-                    </div>
-                    {/* Modal Footer */}
-                    <div className="mt-12">
-                      <button
-                        onClick={() => {
-                          createNewProduct()
-                            .then((response) => {
-                              if (response) {
-                                const product = response.data as ProductProps
-                                products.push(product)
-                                setProducts(products)
-                              }
-                            })
-                            .catch((error) => console.log(error))
-                            .finally(() => handleProductModal())
-                        }}
-                        className="py-2 px-4 bg-blue-600 text-zinc-200 text-sm rounded-lg"
-                      >
-                        Salvar
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </Modal>
+                      setNewProduct((prevState) => ({
+                        ...prevState,
+                        price: number,
+                      }))
+                    }}
+                  />
+                </Modal.Body>
+                <Modal.Footer>
+                  <Modal.Button
+                    onClick={() => {
+                      createNewProduct()
+                        .then((response) => {
+                          if (response) {
+                            const product: ProductProps = response.data
+                            products.push(product)
+                            setProducts(products)
+                          }
+                        })
+                        .catch((error) => console.log(error))
+                        .finally(() => setOpen(false))
+                    }}
+                  >
+                    Salvar
+                  </Modal.Button>
+                </Modal.Footer>
+              </Modal.Root>
             </div>
             <div className="flex flex-col">
               <div className="flex bg-zinc-200 py-2 px-4">
