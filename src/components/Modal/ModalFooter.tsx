@@ -5,5 +5,5 @@ interface ModalFooterProps {
 }
 
 export const ModalFooter = ({ children }: ModalFooterProps) => {
-  return <div className="mt-4">{children}</div>
+  return <div className="flex flex-col mt-4 gap-4">{children}</div>
 }
