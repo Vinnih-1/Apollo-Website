@@ -1,6 +1,7 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
+import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import axios from 'axios'
@@ -20,6 +21,8 @@ export const Users = () => {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [users, setUsers] = useState<Array<UserProps>>([])
+  const [open, setOpen] = useState(false)
+  const [viewUser, setViewUser] = useState<UserProps>()
   const usersUrl = process.env.NEXT_PUBLIC_AUTH_USERS as string
 
   useEffect(() => {
@@ -125,9 +128,50 @@ export const Users = () => {
                           </span>
                         ))}
                     </span>
-                    <button className="py-2 px-4 bg-blue-600 text-zinc-200 rounded-lg max-w-[15%] mx-auto">
+                    <button
+                      onClick={() => {
+                        setViewUser(user)
+                        setOpen(true)
+                      }}
+                      className="py-2 px-4 bg-blue-600 text-zinc-200 rounded-lg max-w-[15%] mx-auto"
+                    >
                       Detalhes
                     </button>
+                    <Modal.Root open={open}>
+                      <Modal.Close onClick={() => setOpen(!open)} />
+                      <Modal.Header title="Informações do Usuário" />
+                      <Modal.Body>
+                        <Modal.Input
+                          title=""
+                          value={viewUser?.email}
+                          label="Email"
+                          variant="outlined"
+                          disabled
+                        />
+                        <Modal.Input
+                          title=""
+                          value={
+                            viewUser?.service !== null
+                              ? viewUser?.service
+                              : 'Nenhum'
+                          }
+                          label="ID do Serviço"
+                          variant="outlined"
+                          disabled
+                        />
+                        <Modal.Footer>
+                          {viewUser?.authorities &&
+                            viewUser?.authorities.map((authority, index) => (
+                              <span
+                                className="block text-center text-sm text-zinc-400"
+                                key={index}
+                              >
+                                {authority.authority.substring(5)}
+                              </span>
+                            ))}
+                        </Modal.Footer>
+                      </Modal.Body>
+                    </Modal.Root>
                   </div>
                 ))
               ) : (
