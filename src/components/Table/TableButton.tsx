@@ -1,17 +1,21 @@
-import { ButtonHTMLAttributes } from 'react'
+import { ButtonHTMLAttributes, ReactNode } from 'react'
+import { twMerge } from 'tailwind-merge'
 
 interface TableButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  text: string
+  children: ReactNode
 }
 
-export const TableButton = ({ text, ...rest }: TableButtonProps) => {
+export const TableButton = ({ children, ...rest }: TableButtonProps) => {
   return (
-    <td className="text-end">
+    <td className={twMerge('text-end', rest.className)}>
       <button
         {...rest}
-        className="mr-2 px-4 py-2 bg-blue-600 text-zinc-200 text-sm rounded-lg"
+        className={twMerge(
+          'px-4 py-2 bg-blue-600 text-zinc-200 text-sm rounded-lg',
+          rest.className,
+        )}
       >
-        {text}
+        {children}
       </button>
     </td>
   )

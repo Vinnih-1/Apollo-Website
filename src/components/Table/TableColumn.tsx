@@ -12,13 +12,7 @@ export const TableColumn = ({
 }: TableColumnProps) => {
   return (
     <th className={twMerge('py-2 text-start', rest.className)}>
-      <span
-        className={
-          persist
-            ? 'ml-2 font-medium mr-2'
-            : 'mr-2 ml-2 font-medium hidden md:block'
-        }
-      >
+      <span className={persist ? 'font-medium' : 'font-medium hidden md:block'}>
         {text}
       </span>
     </th>
