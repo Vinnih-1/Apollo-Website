@@ -1,6 +1,5 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
-import { Loading } from '@/components/Loading/Loading'
 import { Modal } from '@/components/Modal'
 import { ModalClose } from '@/components/Modal/ModalClose'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
@@ -13,9 +12,7 @@ import { DashboardLayout, ProductProps } from '../DashboardLayout'
 
 export const Products = () => {
   const validation = useAuth()
-  const productUrl = process.env.NEXT_PUBLIC_DASHBOARD_PRODUCTS as string
   const [products, setProducts] = useState<Array<ProductProps>>([])
-  const [loading, setLoading] = useState(true)
   const [newProduct, setNewProduct] = useState<ProductProps>({
     id: 0,
     name: '',
@@ -48,7 +45,7 @@ export const Products = () => {
     }
 
     return axios.post(
-      productUrl + 'create',
+      (process.env.NEXT_PUBLIC_DASHBOARD_PRODUCTS as string) + 'create',
       {
         id: productDTO.id,
         name: productDTO.name,
@@ -65,20 +62,23 @@ export const Products = () => {
   }
 
   const deleteExistentProduct = async (product: ProductProps) => {
-    return axios.delete(productUrl + 'delete', {
-      headers: {
-        Authorization: 'Bearer ' + validation.token,
+    return axios.delete(
+      (process.env.NEXT_PUBLIC_DASHBOARD_PRODUCTS as string) + 'delete',
+      {
+        headers: {
+          Authorization: 'Bearer ' + validation.token,
+        },
+        params: {
+          id: product.id,
+        },
       },
-      params: {
-        id: product.id,
-      },
-    })
+    )
   }
 
   useEffect(() => {
     if (validation.token !== '') {
       axios
-        .get(productUrl, {
+        .get(process.env.NEXT_PUBLIC_DASHBOARD_PRODUCTS as string, {
           headers: {
             Authorization: 'Bearer ' + validation.token,
           },
@@ -86,15 +86,11 @@ export const Products = () => {
         .then((response) => {
           const service = response.data as Array<ProductProps>
           setProducts(service)
-          setLoading(false)
         })
         .catch((error) => console.log(error))
     }
   }, [validation])
 
-  if (loading) {
-    return <Loading />
-  }
   return (
     <DashboardLayout>
       <div className="fixed top-0 z-10 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
@@ -227,93 +223,6 @@ export const Products = () => {
                 ))}
             </Table.Content>
           </Table.Root>
-          {/* 
-          <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
-            <div className="flex items-center justify-between p-8">
-              <h1 >
-                Produtos criados por você
-              </h1>
-              <button
-                
-                className="text-white text-sm text-light rounded-xl py-3 px-6 bg-green-600 hover:bg-green-500 duration-300"
-              >
-                
-              </button>
-              
-            </div>
-            <div className="flex flex-col">
-              <div className="flex bg-zinc-200 py-2 px-4">
-                <span className="grow max-w-[70%] md:max-w-[26%]">
-                  Nome do Produto
-                </span>
-                <span className="grow hidden md:block max-w-[26%]">
-                  ID do Produto
-                </span>
-                <span className="grow hidden md:block max-w-[10%]">Preço</span>
-                <span className="grow hidden md:block max-w-[26%]">
-                  Descrição
-                </span>
-                <span className="grow hidden md:block max-w-[10%] text-center">
-                  Deletar
-                </span>
-              </div>
-              {products.length > 0 ? (
-                products.map((product, index) => (
-                  <div
-                    className="flex items-center bg-zinc-100 p-4"
-                    key={index}
-                  >
-                    <span className="grow text-zinc-700 max-w-[70%] md:max-w-[26%]">
-                      {product.name}
-                    </span>
-                    <span className="grow text-zinc-700 hidden md:block max-w-[26%] overflow-hidden truncate">
-                      {product.id}
-                    </span>
-                    <span className="grow text-zinc-700 hidden md:block max-w-[10%]">
-                      R$ {product.price.toFixed(2)}
-                    </span>
-                    <span className="grow text-zinc-700 hidden md:block max-w-[26%] overflow-hidden truncate">
-                      {product.description}
-                    </span>
-                    <button
-                      onClick={() => {
-                        deleteExistentProduct(product)
-                          .then(() => {
-                            const newProducts = products.filter(
-                              (item) => item.id !== product.id,
-                            )
-                            setProducts(newProducts)
-                          })
-                          .catch((error) => console.log(error))
-                      }}
-                      className="hidden md:block mx-auto"
-                    >
-                      <DeleteForeverIcon className="!fill-red-600 hover:!fill-sky-600 duration-300" />
-                    </button>
-                    <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
-                      Editar
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <div className="flex items-center bg-zinc-100 p-4">
-                  <span className="grow text-zinc-700 max-w-[70%] md:max-w-[26%]">
-                    -
-                  </span>
-                  <span className="grow text-zinc-700 hidden md:block max-w-[26%] overflow-hidden truncate">
-                    -
-                  </span>
-                  <span className="grow text-zinc-700 hidden md:block max-w-[10%]">
-                    -
-                  </span>
-                  <span className="grow text-zinc-700 hidden md:block max-w-[26%] overflow-hidden truncate">
-                    -
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-          */}
         </div>
       </div>
     </DashboardLayout>

@@ -1,6 +1,5 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
-import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettingsRounded'
@@ -11,14 +10,12 @@ import { DashboardLayout, ServiceProps } from '../DashboardLayout'
 
 const Service = () => {
   const validation = useAuth()
-  const serviceUrl = process.env.NEXT_PUBLIC_DASHBOARD_SERVICE as string
   const [service, setService] = useState<ServiceProps | undefined>()
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (validation.token !== '') {
       axios
-        .get(serviceUrl, {
+        .get(process.env.NEXT_PUBLIC_DASHBOARD_SERVICE as string, {
           headers: {
             Authorization: 'Bearer ' + validation.token,
           },
@@ -26,15 +23,10 @@ const Service = () => {
         .then((response) => {
           const service = response.data as ServiceProps
           setService(service)
-          setLoading(false)
         })
         .catch((error) => console.log(error))
     }
   }, [validation])
-
-  if (loading) {
-    return <Loading />
-  }
 
   return (
     <DashboardLayout>

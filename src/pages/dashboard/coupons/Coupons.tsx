@@ -1,6 +1,5 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
-import { Loading } from '@/components/Loading/Loading'
 import { Modal } from '@/components/Modal'
 import { ModalClose } from '@/components/Modal/ModalClose'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
@@ -15,7 +14,6 @@ import { CouponProps, DashboardLayout } from '../DashboardLayout'
 export const Coupons = () => {
   const validation = useAuth()
   const [coupons, setCoupons] = useState<Array<CouponProps>>([])
-  const [loading, setLoading] = useState(true)
   const [newCoupon, setNewCoupon] = useState<CouponProps>({
     name: '',
     discount: 0,
@@ -72,15 +70,10 @@ export const Coupons = () => {
         .then((response) => {
           const payments = response.data as Array<CouponProps>
           setCoupons(payments)
-          setLoading(false)
         })
         .catch((error) => console.log(error))
     }
   }, [validation])
-
-  if (loading) {
-    return <Loading />
-  }
 
   return (
     <DashboardLayout>
@@ -237,97 +230,6 @@ export const Coupons = () => {
                 ))}
             </Table.Content>
           </Table.Root>
-          {/* 
-          <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
-            <div className="flex items-center justify-between p-8">
-              <h1 >
-                
-              </h1>
-              <button
-                onClick={() => setOpen(!open)}
-                className="text-white text-sm text-light rounded-xl py-3 px-6 bg-green-600 hover:bg-green-500 duration-300"
-              >
-                Criar cupom
-              </button>
-              
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center bg-zinc-200 py-2 px-4">
-                <span className="grow max-w-[40%] md:max-w-[26%]">
-                  Nome do Cupom
-                </span>
-                <span className="grow hidden md:block max-w-[26%]">
-                  ID do Cupom
-                </span>
-                <span className="grow max-w-[40%] md:max-w-[10%]">
-                  Desconto
-                </span>
-                <span className="grow hidden md:block max-w-[26%]">
-                  Data de Expiração
-                </span>
-                <span className="grow hidden md:block max-w-[10%] text-center">
-                  Deletar
-                </span>
-              </div>
-              {coupons.length > 0 ? (
-                coupons.map((coupon, index) => (
-                  <div
-                    className="flex items-center bg-zinc-100 p-4"
-                    key={index}
-                  >
-                    <span className="grow max-w-[40%] md:max-w-[26%] text-green-600 font-bold">
-                      {coupon.name}
-                    </span>
-                    <span className="grow hidden md:block max-w-[26%] text-zinc-400 font-light text-sm overflow-hidden truncate">
-                      {coupon.id}
-                    </span>
-                    <span className="grow max-w-[40%] md:max-w-[10%] text-blue-600 font-bold">
-                      {coupon.discount}
-                    </span>
-                    <span className="grow hidden md:block max-w-[26%] text-red-600 overflow-hidden truncate">
-                      {coupon.expirateAt}
-                    </span>
-                    <button
-                      onClick={() => {
-                        handleDeleteCoupon(coupon)
-                          .then((response) => {
-                            if (response.status === 200) {
-                              const newCoupons = coupons.filter(
-                                (item) => item.id !== coupon.id,
-                              )
-                              setCoupons(newCoupons)
-                            }
-                          })
-                          .catch((error) => console.log(error))
-                      }}
-                      className="hidden md:block mx-auto"
-                    >
-                      
-                    </button>
-                    <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
-                      Informações
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <div className="flex items-center bg-zinc-100 p-4">
-                  <span className="grow max-w-[40%] md:max-w-[26%] text-green-600 font-bold">
-                    -
-                  </span>
-                  <span className="grow hidden md:block max-w-[26%] text-zinc-400 font-light text-sm overflow-hidden truncate">
-                    -
-                  </span>
-                  <span className="grow max-w-[40%] md:max-w-[10%] text-blue-600 font-bold">
-                    -
-                  </span>
-                  <span className="grow hidden md:block max-w-[26%] text-red-600 overflow-hidden truncate">
-                    -
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
-          */}
         </div>
       </div>
     </DashboardLayout>

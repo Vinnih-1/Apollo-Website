@@ -1,6 +1,5 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
-import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
@@ -14,45 +13,41 @@ import { DashboardLayout } from '../DashboardLayout'
 export const Orders = () => {
   const validation = useAuth()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
   const [orders, setOrders] = useState<Array<PurchaseProps>>([])
-  const ordersUrl = process.env.NEXT_PUBLIC_DASHBOARD_ORDERS as string
 
   useEffect(() => {
     if (validation.token !== '') {
       axios
-        .get(ordersUrl + 'payments', {
-          headers: {
-            Authorization: 'Bearer ' + validation.token,
+        .get(
+          (process.env.NEXT_PUBLIC_DASHBOARD_ORDERS as string) + 'payments',
+          {
+            headers: {
+              Authorization: 'Bearer ' + validation.token,
+            },
+            params: {
+              page: 0,
+            },
           },
-          params: {
-            page: 0,
-          },
-        })
+        )
         .then((response) => {
           const { content } = response.data
           setOrders(content as Array<PurchaseProps>)
-          setLoading(false)
-        })
-        .catch(() => {
-          setLoading(false)
         })
     }
   }, [validation])
 
   const acceptOrder = async (order: PurchaseProps) => {
-    return axios.get(ordersUrl + 'authorize', {
-      headers: {
-        Authorization: 'Bearer ' + validation.token,
+    return axios.get(
+      (process.env.NEXT_PUBLIC_DASHBOARD_ORDERS as string) + 'authorize',
+      {
+        headers: {
+          Authorization: 'Bearer ' + validation.token,
+        },
+        params: {
+          externalReference: order.externalReference,
+        },
       },
-      params: {
-        externalReference: order.externalReference,
-      },
-    })
-  }
-
-  if (loading) {
-    return <Loading />
+    )
   }
 
   if (!validation.authorities.some((path) => path.authority === 'ROLE_ADMIN')) {

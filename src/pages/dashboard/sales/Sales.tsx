@@ -1,6 +1,5 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
-import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
@@ -11,15 +10,12 @@ import { DashboardLayout, PaymentProps } from '../DashboardLayout'
 
 export const Sales = () => {
   const validation = useAuth()
-  const paymentUrl = process.env
-    .NEXT_PUBLIC_DASHBOARD_APPROVED_PAYMENTS as string
   const [payments, setPayments] = useState<Array<PaymentProps>>([])
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (validation.token !== '') {
       axios
-        .get(paymentUrl, {
+        .get(process.env.NEXT_PUBLIC_DASHBOARD_APPROVED_PAYMENTS as string, {
           headers: {
             Authorization: 'Bearer ' + validation.token,
           },
@@ -30,15 +26,10 @@ export const Sales = () => {
         .then((response) => {
           const payments = response.data as Array<PaymentProps>
           setPayments(payments)
-          setLoading(false)
         })
         .catch((error) => console.log(error))
     }
   }, [validation])
-
-  if (loading) {
-    return <Loading />
-  }
 
   return (
     <DashboardLayout>

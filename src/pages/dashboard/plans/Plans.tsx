@@ -1,6 +1,5 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
-import { Loading } from '@/components/Loading/Loading'
 import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
@@ -14,16 +13,14 @@ import { DashboardLayout, ServiceProps } from '../DashboardLayout'
 export const Plans = () => {
   const validation = useAuth()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
   const [services, setServices] = useState<Array<ServiceProps>>([])
   const [selectService, setSelectService] = useState<ServiceProps>()
   const [open, setOpen] = useState(false)
-  const servicesUrl = process.env.NEXT_PUBLIC_DASHBOARD_ALL_SERVICE as string
 
   useEffect(() => {
     if (validation.token !== '') {
       axios
-        .get(servicesUrl, {
+        .get(process.env.NEXT_PUBLIC_DASHBOARD_ALL_SERVICE as string, {
           headers: {
             Authorization: 'Bearer ' + validation.token,
           },
@@ -34,17 +31,12 @@ export const Plans = () => {
         .then((response: AxiosResponse) => {
           const { content } = response.data
           setServices(content as Array<ServiceProps>)
-          setLoading(false)
         })
         .catch((error) => {
           console.log(error)
         })
     }
   }, [validation])
-
-  if (loading) {
-    return <Loading />
-  }
 
   if (!validation.authorities.some((path) => path.authority === 'ROLE_ADMIN')) {
     router.replace('/dashboard')
