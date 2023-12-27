@@ -1,6 +1,8 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
+import { Modal } from '@/components/Modal'
+import { ModalClose } from '@/components/Modal/ModalClose'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForeverRounded'
@@ -11,14 +13,72 @@ import { DashboardLayout, ProductProps } from '../DashboardLayout'
 
 export const Products = () => {
   const validation = useAuth()
-  const serviceUrl = process.env.NEXT_PUBLIC_DASHBOARD_PRODUCTS as string
+  const productUrl = process.env.NEXT_PUBLIC_DASHBOARD_PRODUCTS as string
   const [products, setProducts] = useState<Array<ProductProps>>([])
   const [loading, setLoading] = useState(true)
+  const [newProduct, setNewProduct] = useState<ProductProps>({
+    id: 0,
+    name: '',
+    description: '',
+    price: 0,
+    serviceId: '',
+  })
+  const [open, setOpen] = useState(false)
+
+  const createProductPolicy = (product: ProductProps): boolean => {
+    if (product.name === '') return false
+    if (product.price > 999.99) return false
+    if (product.price < 0.1) return false
+
+    return true
+  }
+
+  const createNewProduct = async () => {
+    const productDTO: ProductProps = {
+      id: 0,
+      name: newProduct.name,
+      description: newProduct.description,
+      price: newProduct.price,
+      serviceId: '',
+    }
+
+    if (!createProductPolicy(productDTO)) {
+      console.log('error')
+      return
+    }
+
+    return axios.post(
+      productUrl + 'create',
+      {
+        id: productDTO.id,
+        name: productDTO.name,
+        description: productDTO.description,
+        price: productDTO.price,
+        serviceId: productDTO.serviceId,
+      },
+      {
+        headers: {
+          Authorization: 'Bearer ' + validation.token,
+        },
+      },
+    )
+  }
+
+  const deleteExistentProduct = async (product: ProductProps) => {
+    return axios.delete(productUrl + 'delete', {
+      headers: {
+        Authorization: 'Bearer ' + validation.token,
+      },
+      params: {
+        id: product.id,
+      },
+    })
+  }
 
   useEffect(() => {
     if (validation.token !== '') {
       axios
-        .get(serviceUrl, {
+        .get(productUrl, {
           headers: {
             Authorization: 'Bearer ' + validation.token,
           },
@@ -78,9 +138,78 @@ export const Products = () => {
               <h1 className="font-bold text-xl text-blue-600">
                 Produtos criados por você
               </h1>
-              <button className="text-white text-sm text-light rounded-xl py-3 px-6 bg-green-600 hover:bg-green-500 duration-300">
+              <button
+                onClick={() => setOpen(!open)}
+                className="text-white text-sm text-light rounded-xl py-3 px-6 bg-green-600 hover:bg-green-500 duration-300"
+              >
                 Criar produto
               </button>
+              <Modal.Root open={open}>
+                <ModalClose onClick={() => setOpen(!open)} />
+                <Modal.Header title="Criar produto" />
+                <Modal.Body>
+                  <Modal.Input
+                    variant="outlined"
+                    title="Nome do seu Produto"
+                    label="Nome"
+                    value={newProduct?.name}
+                    onChange={(e) =>
+                      setNewProduct((prevState) => ({
+                        ...prevState,
+                        name: e.target.value,
+                      }))
+                    }
+                  />
+                  <Modal.Input
+                    variant="outlined"
+                    title="Descrição do seu Produto"
+                    label="Descrição"
+                    value={newProduct?.description}
+                    onChange={(e) =>
+                      setNewProduct((prevState) => ({
+                        ...prevState,
+                        description: e.target.value,
+                      }))
+                    }
+                  />
+                  <Modal.Numeric
+                    prefix="R$"
+                    thousandSeparator="."
+                    decimalSeparator=","
+                    decimalScale={2}
+                    title="Defina um preço para o seu produto"
+                    value={newProduct?.price}
+                    onChange={(e) => {
+                      const number = parseFloat(
+                        e.target.value.replace(',', '.').replace('R$', ''),
+                      )
+
+                      setNewProduct((prevState) => ({
+                        ...prevState,
+                        price: number,
+                      }))
+                    }}
+                  />
+                </Modal.Body>
+                <Modal.Footer>
+                  <Modal.Button
+                    onClick={() => {
+                      createNewProduct()
+                        .then((response) => {
+                          if (response) {
+                            const product: ProductProps = response.data
+                            products.push(product)
+                            setProducts(products)
+                          }
+                        })
+                        .catch((error) => console.log(error))
+                        .finally(() => setOpen(false))
+                    }}
+                  >
+                    Salvar
+                  </Modal.Button>
+                </Modal.Footer>
+              </Modal.Root>
             </div>
             <div className="flex flex-col">
               <div className="flex bg-zinc-200 py-2 px-4">
@@ -116,7 +245,19 @@ export const Products = () => {
                     <span className="grow text-zinc-700 hidden md:block max-w-[26%] overflow-hidden truncate">
                       {product.description}
                     </span>
-                    <button className="hidden md:block mx-auto">
+                    <button
+                      onClick={() => {
+                        deleteExistentProduct(product)
+                          .then(() => {
+                            const newProducts = products.filter(
+                              (item) => item.id !== product.id,
+                            )
+                            setProducts(newProducts)
+                          })
+                          .catch((error) => console.log(error))
+                      }}
+                      className="hidden md:block mx-auto"
+                    >
                       <DeleteForeverIcon className="!fill-red-600 hover:!fill-sky-600 duration-300" />
                     </button>
                     <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">

@@ -105,7 +105,7 @@ export const Orders = () => {
             </div>
             <div className="flex flex-col">
               <div className="flex bg-zinc-200 py-2 px-4">
-                <span className="grow max-w-[20%]">Email</span>
+                <span className="grow max-w-[25%]">Email</span>
                 <span className="grow hidden md:block max-w-[30%]">
                   Referência externa
                 </span>
@@ -120,7 +120,7 @@ export const Orders = () => {
                       key={order.id}
                       className="flex items-center bg-zinc-100 p-4"
                     >
-                      <span className="grow text-zinc-700 text-sm max-w-[70%] md:max-w-[20%] overflow-hidden truncate">
+                      <span className="grow text-zinc-700 text-sm max-w-[70%] md:max-w-[25%] overflow-hidden truncate">
                         {order.payer}
                       </span>
                       <span className="grow text-zinc-700 md:block hidden text-sm max-w-[30%] overflow-hidden truncate">

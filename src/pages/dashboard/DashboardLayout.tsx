@@ -11,13 +11,14 @@ export interface ProductProps {
 }
 
 export interface CouponProps {
-  id: string
+  id?: number
   name: string
-  serviceId: string
+  serviceId?: string
   discount: number
-  createAt: string
-  expirateAt: string
-  enabled: boolean
+  expirateDays: number
+  createAt?: string
+  expirateAt?: string
+  enabled?: boolean
 }
 
 export interface PaymentProps {
@@ -55,6 +56,10 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    if (!validation.loading) {
+      setLoading(false)
+    }
+
     if (validation.token !== '') {
       axios
         .get(serviceUrl, {
@@ -66,14 +71,25 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
           const service = response.data as ServiceProps
           if (service.id === null) setService(undefined)
           else setService(service)
-          setLoading(false)
         })
-        .catch((error) => console.log(error))
+        .catch((error) => {
+          console.log(error)
+        })
     }
   }, [validation])
 
   if (loading) {
     return null
+  }
+
+  if (!validation.success) {
+    return (
+      <div className="flex justify-center items-center w-screen h-screen">
+        <span className="text-sm text-zinc-400 font-light">
+          Algo de errado não está certo...
+        </span>
+      </div>
+    )
   }
 
   if (

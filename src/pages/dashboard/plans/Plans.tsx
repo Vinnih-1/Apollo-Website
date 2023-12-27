@@ -1,6 +1,7 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
+import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import axios, { AxiosResponse } from 'axios'
@@ -14,6 +15,8 @@ export const Plans = () => {
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [services, setServices] = useState<Array<ServiceProps>>([])
+  const [selectService, setSelectService] = useState<ServiceProps>()
+  const [open, setOpen] = useState(false)
   const servicesUrl = process.env.NEXT_PUBLIC_DASHBOARD_ALL_SERVICE as string
 
   useEffect(() => {
@@ -116,9 +119,50 @@ export const Plans = () => {
                     <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
                       {service.expirateAt}
                     </span>
-                    <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm mx-auto">
+                    <button
+                      onClick={() => {
+                        setSelectService(service)
+                        setOpen(true)
+                      }}
+                      className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm mx-auto"
+                    >
                       Informações
                     </button>
+                    <Modal.Root open={open}>
+                      <Modal.Close onClick={() => setOpen(!open)} />
+                      <Modal.Header title="Informações do Plano" />
+                      <Modal.Body>
+                        <Modal.Input
+                          label="Dono"
+                          title=""
+                          variant="outlined"
+                          disabled
+                          value={selectService?.owner}
+                        />
+                        <Modal.Input
+                          label="ID"
+                          title=""
+                          variant="outlined"
+                          disabled
+                          value={selectService?.id}
+                        />
+                        <Modal.Input
+                          label="Key"
+                          title=""
+                          variant="outlined"
+                          disabled
+                          value={selectService?.serviceKey}
+                        />
+                        <Modal.Footer>
+                          <span className="text-center text-sm text-red-600 text-light">
+                            {selectService?.expirateAt}
+                          </span>
+                          <div className="self-center">
+                            <Modal.Button>Suspender</Modal.Button>
+                          </div>
+                        </Modal.Footer>
+                      </Modal.Body>
+                    </Modal.Root>
                   </div>
                 ))
               ) : (
