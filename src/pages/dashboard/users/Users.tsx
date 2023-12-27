@@ -164,33 +164,6 @@ export const Users = () => {
                 ))}
             </Table.Content>
           </Table.Root>
-          {/* 
-              {users.length > 0 &&
-                users.map((user, index) => (
-                  <tr key={index}>
-                    <td className="py-4 text-sm text-zinc-400">
-                      <span className="ml-2">{user.email}</span>
-                    </td>
-                    <td className="py-4 text-sm text-zinc-400">
-                      <span className="hidden md:block">{user.service}</span>
-                    </td>
-                    <td className="py-4 text-sm text-zinc-400">
-                      <span className="hidden md:block">
-                        {user.authorities.map((role) =>
-                          role.authority.substring(5).concat(' '),
-                        )}
-                      </span>
-                    </td>
-                    <td className="text-end">
-                      <button className="mr-2 px-4 py-2 bg-blue-600 text-zinc-200 text-sm rounded-lg">
-                        Detalhes
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-            </table>
-          </div>
-          */}
         </div>
       </div>
     </DashboardLayout>
