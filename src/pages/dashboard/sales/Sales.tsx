@@ -2,8 +2,8 @@ import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
-import CheckCircleIcon from '@mui/icons-material/CheckCircleRounded'
 import axios from 'axios'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -84,66 +84,33 @@ export const Sales = () => {
               </span>
             </div>
           </div>
-          <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
-            <div className="flex items-center justify-between p-8">
-              <h1 className="font-bold text-xl text-blue-600">
-                Vendas efetuadas com êxito
-              </h1>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center bg-zinc-200 py-2 px-4">
-                <span className="grow md:max-w-[26%]">Comprador</span>
-                <span className="grow hidden md:block max-w-[26%]">
-                  ID do Produto
-                </span>
-                <span className="grow hidden md:block max-w-[26%]">
-                  Chat do Pagamento
-                </span>
-                <span className="grow hidden md:block max-w-[10%]">Preço</span>
-                <span className="grow hidden md:block max-w-[10%] text-center">
-                  Status
-                </span>
-              </div>
-              {payments.length > 0 ? (
+          <Table.Root>
+            <Table.Top>
+              <Table.Text
+                text="Vendas efetuadas com êxito"
+                className="font-bold text-xl text-blue-600"
+              />
+            </Table.Top>
+            <Table.Content>
+              <Table.Header>
+                <Table.Column persist text="Comprador" />
+                <Table.Column text="ID do Produto" />
+                <Table.Column text="Preço" />
+                <Table.Column text="Status" />
+                <Table.Column text="Informações" className="!text-end mr-2" />
+              </Table.Header>
+              {payments.length > 0 &&
                 payments.map((payment, index) => (
-                  <div
-                    className="flex items-center bg-zinc-100 p-4"
-                    key={index}
-                  >
-                    <span className="grow md:max-w-[26%] text-zinc-500">
-                      {payment.payer}
-                    </span>
-                    <span className="grow hidden md:block max-w-[26%] overflow-hidden truncate text-zinc-400">
-                      {payment.id}
-                    </span>
-                    <span className="grow hidden md:block max-w-[26%] text-zinc-400">
-                      {payment.chatId}
-                    </span>
-                    <span className="grow hidden md:block max-w-[10%] text-blue-600 font-bold">
-                      R$ {payment.price}
-                    </span>
-                    <CheckCircleIcon className="grow hidden md:block max-w-[10%] !fill-green-400 text-2xl mx-auto" />
-                    <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
-                      Informações
-                    </button>
-                  </div>
-                ))
-              ) : (
-                <div className="flex items-center bg-zinc-100 p-4">
-                  <span className="grow md:max-w-[26%] text-zinc-500">-</span>
-                  <span className="grow hidden md:block max-w-[26%] overflow-hidden truncate text-zinc-400">
-                    -
-                  </span>
-                  <span className="grow hidden md:block max-w-[26%] text-zinc-400">
-                    -
-                  </span>
-                  <span className="grow hidden md:block max-w-[10%] text-blue-600 font-bold">
-                    -
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
+                  <Table.Data key={index}>
+                    <Table.Row persist text={payment.payer} />
+                    <Table.Row text={payment.productId.toString()} />
+                    <Table.Row text={payment.price.toFixed(2)} />
+                    <Table.Row text={payment.paymentStatus} />
+                    <Table.Button>Detalhes</Table.Button>
+                  </Table.Data>
+                ))}
+            </Table.Content>
+          </Table.Root>
         </div>
       </div>
     </DashboardLayout>

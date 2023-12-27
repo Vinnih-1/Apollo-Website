@@ -4,6 +4,7 @@ import { Loading } from '@/components/Loading/Loading'
 import { Modal } from '@/components/Modal'
 import { ModalClose } from '@/components/Modal/ModalClose'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForeverRounded'
 import axios from 'axios'
@@ -119,10 +120,128 @@ export const Coupons = () => {
               </span>
             </div>
           </div>
+          <Table.Root>
+            <Table.Top>
+              <Table.Text
+                text="Cupons criados por você"
+                className="font-bold text-xl text-blue-600"
+              />
+              <Table.Button onClick={() => setOpen(!open)}>
+                Criar cupom
+              </Table.Button>
+            </Table.Top>
+            <Table.Content>
+              <Table.Header>
+                <Table.Column persist text="Nome do Cupom" />
+                <Table.Column text="ID do Cupom" />
+                <Table.Column text="Desconto" />
+                <Table.Column text="Informações" />
+                <Table.Column text="" />
+              </Table.Header>
+              {coupons.length > 0 &&
+                coupons.map((coupon, index) => (
+                  <Table.Data key={index}>
+                    <Table.Row className="ml-4" persist text={coupon.name} />
+                    <Table.Row text={coupon.id?.toString()} />
+                    <Table.Row text={coupon.discount.toString()} />
+                    <Table.Button className="!text-start">
+                      Detalhes
+                    </Table.Button>
+                    <Table.Button
+                      className="!bg-transparent !text-center !max-w-[24px] !p-0"
+                      onClick={() => {
+                        handleDeleteCoupon(coupon)
+                          .then((response) => {
+                            if (response.status === 200) {
+                              const newCoupons = coupons.filter(
+                                (item) => item.id !== coupon.id,
+                              )
+                              setCoupons(newCoupons)
+                            }
+                          })
+                          .catch((error) => console.log(error))
+                      }}
+                    >
+                      <DeleteForeverIcon className="!fill-red-600 hover:!fill-sky-600 duration-300" />
+                    </Table.Button>
+                    <Modal.Root open={open}>
+                      <ModalClose onClick={() => setOpen(!open)} />
+                      <Modal.Header title="Criar produto" />
+                      <Modal.Body>
+                        <Modal.Input
+                          variant="outlined"
+                          title="Nome do seu Cupom"
+                          label="Nome"
+                          value={newCoupon?.name}
+                          onChange={(e) => {
+                            if (e.target.value.length > 10) return
+                            setNewCoupon((prevState) => ({
+                              ...prevState,
+                              name: e.target.value.toUpperCase(),
+                            }))
+                          }}
+                        />
+                        <Modal.Numeric
+                          title="Defina o desconto do seu Cupom"
+                          value={newCoupon?.discount}
+                          onChange={(e) => {
+                            const number = parseFloat(
+                              e.target.value
+                                .replace(',', '.')
+                                .replace('R$', ''),
+                            )
+                            setNewCoupon((prevState) => ({
+                              ...prevState,
+                              discount: number > 99 ? 1 : number,
+                            }))
+                          }}
+                        />
+                        <Modal.Numeric
+                          title="Defina em quantos dias seu Cupom expira"
+                          value={newCoupon?.expirateDays}
+                          onChange={(e) => {
+                            const number = parseFloat(
+                              e.target.value
+                                .replace(',', '.')
+                                .replace('R$', ''),
+                            )
+                            setNewCoupon((prevState) => ({
+                              ...prevState,
+                              expirateDays: number > 365 ? 1 : number,
+                            }))
+                          }}
+                        />
+                      </Modal.Body>
+                      <Modal.Footer>
+                        <Modal.Button
+                          onClick={() => {
+                            if (createCouponPolicy()) {
+                              createNewCoupon()
+                                .then((response) => {
+                                  if (response) {
+                                    const coupon: CouponProps = response.data
+                                    coupons.push(coupon)
+                                    setCoupons(coupons)
+                                  }
+                                })
+                                .catch((error) => console.log(error))
+                                .finally(() => setOpen(false))
+                            }
+                          }}
+                        >
+                          Salvar
+                        </Modal.Button>
+                      </Modal.Footer>
+                    </Modal.Root>
+                  </Table.Data>
+                ))}
+            </Table.Content>
+          </Table.Root>
+          {/* 
           <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
             <div className="flex items-center justify-between p-8">
-              <h1 className="font-bold text-xl text-blue-600">
-                Cupons criados por você
+              <h1 >
+                
               </h1>
               <button
                 onClick={() => setOpen(!open)}
@@ -130,71 +249,7 @@ export const Coupons = () => {
               >
                 Criar cupom
               </button>
-              <Modal.Root open={open}>
-                <ModalClose onClick={() => setOpen(!open)} />
-                <Modal.Header title="Criar produto" />
-                <Modal.Body>
-                  <Modal.Input
-                    variant="outlined"
-                    title="Nome do seu Cupom"
-                    label="Nome"
-                    value={newCoupon?.name}
-                    onChange={(e) => {
-                      if (e.target.value.length > 10) return
-                      setNewCoupon((prevState) => ({
-                        ...prevState,
-                        name: e.target.value.toUpperCase(),
-                      }))
-                    }}
-                  />
-                  <Modal.Numeric
-                    title="Defina o desconto do seu Cupom"
-                    value={newCoupon?.discount}
-                    onChange={(e) => {
-                      const number = parseFloat(
-                        e.target.value.replace(',', '.').replace('R$', ''),
-                      )
-                      setNewCoupon((prevState) => ({
-                        ...prevState,
-                        discount: number > 99 ? 1 : number,
-                      }))
-                    }}
-                  />
-                  <Modal.Numeric
-                    title="Defina em quantos dias seu Cupom expira"
-                    value={newCoupon?.expirateDays}
-                    onChange={(e) => {
-                      const number = parseFloat(
-                        e.target.value.replace(',', '.').replace('R$', ''),
-                      )
-                      setNewCoupon((prevState) => ({
-                        ...prevState,
-                        expirateDays: number > 365 ? 1 : number,
-                      }))
-                    }}
-                  />
-                </Modal.Body>
-                <Modal.Footer>
-                  <Modal.Button
-                    onClick={() => {
-                      if (createCouponPolicy()) {
-                        createNewCoupon()
-                          .then((response) => {
-                            if (response) {
-                              const coupon: CouponProps = response.data
-                              coupons.push(coupon)
-                              setCoupons(coupons)
-                            }
-                          })
-                          .catch((error) => console.log(error))
-                          .finally(() => setOpen(false))
-                      }
-                    }}
-                  >
-                    Salvar
-                  </Modal.Button>
-                </Modal.Footer>
-              </Modal.Root>
+              
             </div>
             <div className="flex flex-col">
               <div className="flex items-center bg-zinc-200 py-2 px-4">
@@ -247,7 +302,7 @@ export const Coupons = () => {
                       }}
                       className="hidden md:block mx-auto"
                     >
-                      <DeleteForeverIcon className="!fill-red-600 hover:!fill-sky-600 duration-300" />
+                      
                     </button>
                     <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
                       Informações
@@ -272,6 +327,7 @@ export const Coupons = () => {
               )}
             </div>
           </div>
+          */}
         </div>
       </div>
     </DashboardLayout>

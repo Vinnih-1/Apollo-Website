@@ -3,6 +3,7 @@ import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
 import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
 import axios, { AxiosResponse } from 'axios'
 import Image from 'next/image'
@@ -88,46 +89,34 @@ export const Plans = () => {
               </span>
             </div>
           </div>
-          <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
-            <div className="flex items-center justify-between p-8">
-              <h1 className="font-bold text-xl text-blue-600">
-                Lista de planos
-              </h1>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex bg-zinc-200 py-2 px-4">
-                <span className="grow max-w-[33%]">ID do Plano</span>
-                <span className="grow hidden md:block max-w-[13%]">
-                  Service Key
-                </span>
-                <span className="grow hidden md:block max-w-[33%]">
-                  Expira em:
-                </span>
-              </div>
-              {services.length > 0 ? (
+          <Table.Root>
+            <Table.Top>
+              <Table.Text
+                text="Lista de planos"
+                className="font-bold text-xl text-blue-600"
+              />
+            </Table.Top>
+            <Table.Content>
+              <Table.Header>
+                <Table.Column persist text="ID do Plano" />
+                <Table.Column text="Service Key" />
+                <Table.Column text="Expira em:" />
+                <Table.Column text="Informações" className="!text-end mr-2" />
+              </Table.Header>
+              {services.length > 0 &&
                 services.map((service, index) => (
-                  <div
-                    className="flex items-center bg-zinc-100 p-4"
-                    key={index}
-                  >
-                    <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
-                      {service.id}
-                    </span>
-                    <span className="grow text-zinc-700 text-sm max-w-[13%] overflow-hidden truncate">
-                      {service.serviceKey}
-                    </span>
-                    <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
-                      {service.expirateAt}
-                    </span>
-                    <button
+                  <Table.Data key={index}>
+                    <Table.Row persist text={service.id} />
+                    <Table.Row text={service.serviceKey} />
+                    <Table.Row text={service.expirateAt} />
+                    <Table.Button
                       onClick={() => {
                         setSelectService(service)
                         setOpen(true)
                       }}
-                      className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm mx-auto"
                     >
-                      Informações
-                    </button>
+                      Detalhes
+                    </Table.Button>
                     <Modal.Root open={open}>
                       <Modal.Close onClick={() => setOpen(!open)} />
                       <Modal.Header title="Informações do Plano" />
@@ -163,23 +152,10 @@ export const Plans = () => {
                         </Modal.Footer>
                       </Modal.Body>
                     </Modal.Root>
-                  </div>
-                ))
-              ) : (
-                <div className="flex items-center bg-zinc-100 p-4">
-                  <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
-                    -
-                  </span>
-                  <span className="grow text-zinc-700 text-sm max-w-[13%] overflow-hidden truncate">
-                    -
-                  </span>
-                  <span className="grow text-zinc-700 text-sm max-w-[33%] overflow-hidden truncate">
-                    -
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
+                  </Table.Data>
+                ))}
+            </Table.Content>
+          </Table.Root>
         </div>
       </div>
     </DashboardLayout>
