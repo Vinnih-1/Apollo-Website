@@ -119,8 +119,9 @@ export const Users = () => {
                         setViewUser(user)
                         setOpen(true)
                       }}
-                      text="Detalhes"
-                    />
+                    >
+                      Detalhes
+                    </Table.Button>
                     <Modal.Root open={open}>
                       <Modal.Close onClick={() => setOpen(!open)} />
                       <Modal.Header title="Informações do Usuário" />
