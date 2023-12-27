@@ -6,6 +6,8 @@ interface TableTopProps {
 
 export const TableTop = ({ children }: TableTopProps) => {
   return (
-    <div className="flex items-center justify-between py-8">{children}</div>
+    <div className="flex items-center justify-between py-8 px-2">
+      {children}
+    </div>
   )
 }
