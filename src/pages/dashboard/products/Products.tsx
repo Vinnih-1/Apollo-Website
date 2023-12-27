@@ -4,8 +4,8 @@ import { Loading } from '@/components/Loading/Loading'
 import { Modal } from '@/components/Modal'
 import { ModalClose } from '@/components/Modal/ModalClose'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
-import DeleteForeverIcon from '@mui/icons-material/DeleteForeverRounded'
 import axios from 'axios'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -133,17 +133,15 @@ export const Products = () => {
               </span>
             </div>
           </div>
-          <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
-            <div className="flex items-center justify-between p-8">
-              <h1 className="font-bold text-xl text-blue-600">
-                Produtos criados por você
-              </h1>
-              <button
-                onClick={() => setOpen(!open)}
-                className="text-white text-sm text-light rounded-xl py-3 px-6 bg-green-600 hover:bg-green-500 duration-300"
-              >
+          <Table.Root>
+            <Table.Top>
+              <Table.Text
+                text="Produtos criados por você"
+                className="font-bold text-xl text-blue-600"
+              />
+              <Table.Button onClick={() => setOpen(!open)}>
                 Criar produto
-              </button>
+              </Table.Button>
               <Modal.Root open={open}>
                 <ModalClose onClick={() => setOpen(!open)} />
                 <Modal.Header title="Criar produto" />
@@ -210,6 +208,38 @@ export const Products = () => {
                   </Modal.Button>
                 </Modal.Footer>
               </Modal.Root>
+            </Table.Top>
+            <Table.Content>
+              <Table.Header>
+                <Table.Column persist text="Nome do Produto" />
+                <Table.Column text="ID do Produto" />
+                <Table.Column text="Preço do Produto" />
+                <Table.Column text="Informações" className="!text-end pr-8" />
+              </Table.Header>
+              {products.length > 0 &&
+                products.map((product, index) => (
+                  <Table.Data key={index}>
+                    <Table.Row persist text={product.name} className="ml-8" />
+                    <Table.Row text={product.id.toString()} />
+                    <Table.Row text={product.price.toFixed(2)} />
+                    <Table.Button className="mr-8">Detalhes</Table.Button>
+                  </Table.Data>
+                ))}
+            </Table.Content>
+          </Table.Root>
+          {/* 
+          <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
+            <div className="flex items-center justify-between p-8">
+              <h1 >
+                Produtos criados por você
+              </h1>
+              <button
+                
+                className="text-white text-sm text-light rounded-xl py-3 px-6 bg-green-600 hover:bg-green-500 duration-300"
+              >
+                
+              </button>
+              
             </div>
             <div className="flex flex-col">
               <div className="flex bg-zinc-200 py-2 px-4">
@@ -283,6 +313,7 @@ export const Products = () => {
               )}
             </div>
           </div>
+          */}
         </div>
       </div>
     </DashboardLayout>
