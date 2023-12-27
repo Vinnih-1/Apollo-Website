@@ -3,6 +3,7 @@ import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
 import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
 import axios from 'axios'
 import Image from 'next/image'
@@ -89,54 +90,41 @@ export const Users = () => {
               </span>
             </div>
           </div>
-          <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
-            <div className="flex items-center justify-between p-8">
-              <h1 className="font-bold text-xl text-blue-600">
-                Lista de usuários
-              </h1>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex bg-zinc-200 py-2 px-4">
-                <span className="grow max-w-[70%] md:max-w-[23%]">Email</span>
-                <span className="grow hidden md:block max-w-[38%]">
-                  Serviço
-                </span>
-                <span className="grow hidden md:block max-w-[20%]">
-                  Permissões
-                </span>
-                <span className="grow hidden md:block max-w-[18%] text-center">
-                  Informações
-                </span>
-              </div>
-              {users.length > 0 ? (
+          <Table.Root>
+            <Table.Top>
+              <Table.Text
+                text="Lista de usuários"
+                className="font-bold text-xl text-blue-600"
+              />
+            </Table.Top>
+            <Table.Content>
+              <Table.Header>
+                <Table.Column persist text="Email" />
+                <Table.Column text="Serviço" />
+                <Table.Column text="Permissões" />
+                <Table.Column
+                  persist
+                  text="Informações"
+                  className="!text-end"
+                />
+              </Table.Header>
+              {users.length > 0 &&
                 users.map((user, index) => (
-                  <div
-                    className="flex items-center bg-zinc-100 p-4"
-                    key={index}
-                  >
-                    <span className="grow text-zinc-700 max-w-[70%] md:max-w-[23%]">
-                      {user.email}
-                    </span>
-                    <span className="grow text-zinc-700 hidden md:block max-w-[38%] overflow-hidden truncate">
-                      {user.service}
-                    </span>
-                    <span className="grow text-zinc-700 hidden md:block max-w-[20%] overflow-hidden truncate">
-                      {user.authorities &&
-                        user.authorities.map((role, index) => (
-                          <span key={index} className="text-sm mr-4">
-                            {role.authority.substring(5)}
-                          </span>
-                        ))}
-                    </span>
-                    <button
+                  <Table.Data key={index}>
+                    <Table.Row persist text={user.email} />
+                    <Table.Row text={user.service} />
+                    <Table.Row
+                      texts={user.authorities.map((role) =>
+                        role.authority.substring(5).concat(' '),
+                      )}
+                    />
+                    <Table.Button
                       onClick={() => {
                         setViewUser(user)
                         setOpen(true)
                       }}
-                      className="py-2 px-4 bg-blue-600 text-zinc-200 rounded-lg max-w-[15%] mx-auto"
-                    >
-                      Detalhes
-                    </button>
+                      text="Detalhes"
+                    />
                     <Modal.Root open={open}>
                       <Modal.Close onClick={() => setOpen(!open)} />
                       <Modal.Header title="Informações do Usuário" />
@@ -172,23 +160,37 @@ export const Users = () => {
                         </Modal.Footer>
                       </Modal.Body>
                     </Modal.Root>
-                  </div>
-                ))
-              ) : (
-                <div className="flex items-center bg-zinc-100 p-4">
-                  <span className="grow text-zinc-700 max-w-[70%] md:max-w-[23%]">
-                    -
-                  </span>
-                  <span className="grow text-zinc-700 hidden md:block max-w-[38%] overflow-hidden truncate">
-                    -
-                  </span>
-                  <span className="grow text-zinc-700 hidden md:block max-w-[20%] overflow-hidden truncate">
-                    -
-                  </span>
-                </div>
-              )}
-            </div>
+                  </Table.Data>
+                ))}
+            </Table.Content>
+          </Table.Root>
+          {/* 
+              {users.length > 0 &&
+                users.map((user, index) => (
+                  <tr key={index}>
+                    <td className="py-4 text-sm text-zinc-400">
+                      <span className="ml-2">{user.email}</span>
+                    </td>
+                    <td className="py-4 text-sm text-zinc-400">
+                      <span className="hidden md:block">{user.service}</span>
+                    </td>
+                    <td className="py-4 text-sm text-zinc-400">
+                      <span className="hidden md:block">
+                        {user.authorities.map((role) =>
+                          role.authority.substring(5).concat(' '),
+                        )}
+                      </span>
+                    </td>
+                    <td className="text-end">
+                      <button className="mr-2 px-4 py-2 bg-blue-600 text-zinc-200 text-sm rounded-lg">
+                        Detalhes
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+            </table>
           </div>
+          */}
         </div>
       </div>
     </DashboardLayout>
