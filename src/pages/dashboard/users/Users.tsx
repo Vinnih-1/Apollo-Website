@@ -102,11 +102,7 @@ export const Users = () => {
                 <Table.Column persist text="Email" />
                 <Table.Column text="Serviço" />
                 <Table.Column text="Permissões" />
-                <Table.Column
-                  persist
-                  text="Informações"
-                  className="!text-end"
-                />
+                <Table.Column text="Informações" className="!text-end" />
               </Table.Header>
               {users.length > 0 &&
                 users.map((user, index) => (
