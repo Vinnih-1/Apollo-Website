@@ -3,6 +3,7 @@ import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
 import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
 import axios, { AxiosResponse } from 'axios'
 import Image from 'next/image'
@@ -88,6 +89,73 @@ export const Plans = () => {
               </span>
             </div>
           </div>
+          <Table.Root>
+            <Table.Top>
+              <Table.Text
+                text="Lista de planos"
+                className="font-bold text-xl text-blue-600"
+              />
+            </Table.Top>
+            <Table.Content>
+              <Table.Header>
+                <Table.Column persist text="ID do Plano" />
+                <Table.Column text="Service Key" />
+                <Table.Column text="Expira em:" />
+                <Table.Column text="Informações" className="!text-end mr-2" />
+              </Table.Header>
+              {services.length > 0 &&
+                services.map((service, index) => (
+                  <Table.Data key={index}>
+                    <Table.Row persist text={service.id} />
+                    <Table.Row text={service.serviceKey} />
+                    <Table.Row text={service.expirateAt} />
+                    <Table.Button
+                      onClick={() => {
+                        setSelectService(service)
+                        setOpen(true)
+                      }}
+                      text="Detalhes"
+                    />
+                    <Modal.Root open={open}>
+                      <Modal.Close onClick={() => setOpen(!open)} />
+                      <Modal.Header title="Informações do Plano" />
+                      <Modal.Body>
+                        <Modal.Input
+                          label="Dono"
+                          title=""
+                          variant="outlined"
+                          disabled
+                          value={selectService?.owner}
+                        />
+                        <Modal.Input
+                          label="ID"
+                          title=""
+                          variant="outlined"
+                          disabled
+                          value={selectService?.id}
+                        />
+                        <Modal.Input
+                          label="Key"
+                          title=""
+                          variant="outlined"
+                          disabled
+                          value={selectService?.serviceKey}
+                        />
+                        <Modal.Footer>
+                          <span className="text-center text-sm text-red-600 text-light">
+                            {selectService?.expirateAt}
+                          </span>
+                          <div className="self-center">
+                            <Modal.Button>Suspender</Modal.Button>
+                          </div>
+                        </Modal.Footer>
+                      </Modal.Body>
+                    </Modal.Root>
+                  </Table.Data>
+                ))}
+            </Table.Content>
+          </Table.Root>
+          {/* 
           <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
             <div className="flex items-center justify-between p-8">
               <h1 className="font-bold text-xl text-blue-600">
@@ -180,6 +248,7 @@ export const Plans = () => {
               )}
             </div>
           </div>
+          */}
         </div>
       </div>
     </DashboardLayout>
