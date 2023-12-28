@@ -117,7 +117,7 @@ const Dashboard = () => {
             </Table.Top>
             <Table.Content>
               <Table.Header>
-                <Table.Column text="Comprador" />
+                <Table.Column persist text="Comprador" />
                 <Table.Column text="ID do Produto" />
                 <Table.Column text="Preço" />
                 <Table.Column text="Informações" />
