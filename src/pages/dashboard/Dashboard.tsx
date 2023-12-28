@@ -1,6 +1,7 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
+import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
@@ -13,6 +14,8 @@ const Dashboard = () => {
   const validation = useAuth()
   const [service, setService] = useState<ServiceProps | undefined>()
   const [payments, setPayments] = useState<Array<PaymentProps>>([])
+  const [viewPayment, setViewPayment] = useState<PaymentProps>()
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (validation.token !== '') {
@@ -125,7 +128,57 @@ const Dashboard = () => {
                     <Table.Row persist text={payment.payer} />
                     <Table.Row text={payment.id} />
                     <Table.Row text={payment.price.toFixed(2)} />
-                    <Table.Button className="text-start">Detalhes</Table.Button>
+                    <Table.Button
+                      onClick={() => {
+                        setViewPayment(payment)
+                        setOpen(!open)
+                      }}
+                      className="text-start"
+                    >
+                      Detalhes
+                    </Table.Button>
+                    <Modal.Root open={open}>
+                      <Modal.Close onClick={() => setOpen(!open)} />
+                      <Modal.Header title="Informações do Pagamento" />
+                      <Modal.Body>
+                        <Modal.Input
+                          title="Comprador"
+                          label=""
+                          value={viewPayment?.payer}
+                          disabled
+                          variant="outlined"
+                        />
+                        <Modal.Input
+                          title="Chat ID"
+                          label=""
+                          value={viewPayment?.chatId}
+                          disabled
+                          variant="outlined"
+                        />
+                        <Modal.Text
+                          text={viewPayment?.paymentStatus}
+                          className="text-center !font-bold !text-2xl !text-yellow-400"
+                        />
+                        <Modal.Text
+                          text={'R$ ' + viewPayment?.price.toFixed(2)}
+                          className="!font-bold !text-4xl !text-blue-600 text-center"
+                        />
+                        <Modal.Footer>
+                          <Modal.Body className="!flex-row justify-center">
+                            <Modal.Button className="!bg-green-600">
+                              Aprovar
+                            </Modal.Button>
+                            <Modal.Button className="!bg-red-600">
+                              Cancelar
+                            </Modal.Button>
+                          </Modal.Body>
+                          <Modal.Text
+                            text={viewPayment?.id}
+                            className="text-sm !text-zinc-400 text-light"
+                          />
+                        </Modal.Footer>
+                      </Modal.Body>
+                    </Modal.Root>
                   </Table.Data>
                 ))}
             </Table.Content>
