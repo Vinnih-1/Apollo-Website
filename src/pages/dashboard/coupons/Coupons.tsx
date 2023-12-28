@@ -12,15 +12,24 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { CouponProps, DashboardLayout } from '../DashboardLayout'
 
+interface ModalProps {
+  createModal: boolean
+  detailsModal: boolean
+}
+
 export const Coupons = () => {
   const validation = useAuth()
   const [coupons, setCoupons] = useState<Array<CouponProps>>([])
+  const [viewCoupon, setViewCoupon] = useState<CouponProps>()
   const [newCoupon, setNewCoupon] = useState<CouponProps>({
     name: '',
     discount: 0,
     expirateDays: 0,
   })
-  const [open, setOpen] = useState(false)
+  const [modal, setModal] = useState<ModalProps>({
+    createModal: false,
+    detailsModal: false,
+  })
 
   const createCouponPolicy = (): boolean => {
     if (newCoupon.name === '') return false
@@ -124,9 +133,93 @@ export const Coupons = () => {
                 text="Cupons criados por você"
                 className="font-bold text-xl text-blue-600"
               />
-              <Table.Button onClick={() => setOpen(!open)}>
+              <Table.Button
+                onClick={() => {
+                  setModal({
+                    createModal: true,
+                    detailsModal: false,
+                  })
+                }}
+              >
                 Criar cupom
               </Table.Button>
+              <Modal.Root open={modal.createModal}>
+                <ModalClose
+                  onClick={() => {
+                    setModal({
+                      createModal: false,
+                      detailsModal: false,
+                    })
+                  }}
+                />
+                <Modal.Header title="Criar produto" />
+                <Modal.Body>
+                  <Modal.Input
+                    variant="outlined"
+                    title="Nome do seu Cupom"
+                    label="Nome"
+                    value={newCoupon?.name}
+                    onChange={(e) => {
+                      if (e.target.value.length > 10) return
+                      setNewCoupon((prevState) => ({
+                        ...prevState,
+                        name: e.target.value.toUpperCase(),
+                      }))
+                    }}
+                  />
+                  <Modal.Numeric
+                    title="Defina o desconto do seu Cupom"
+                    value={newCoupon?.discount}
+                    onChange={(e) => {
+                      const number = parseFloat(
+                        e.target.value.replace(',', '.').replace('R$', ''),
+                      )
+                      setNewCoupon((prevState) => ({
+                        ...prevState,
+                        discount: number > 99 ? 1 : number,
+                      }))
+                    }}
+                  />
+                  <Modal.Numeric
+                    title="Defina em quantos dias seu Cupom expira"
+                    value={newCoupon?.expirateDays}
+                    onChange={(e) => {
+                      const number = parseFloat(
+                        e.target.value.replace(',', '.').replace('R$', ''),
+                      )
+                      setNewCoupon((prevState) => ({
+                        ...prevState,
+                        expirateDays: number > 365 ? 1 : number,
+                      }))
+                    }}
+                  />
+                </Modal.Body>
+                <Modal.Footer>
+                  <Modal.Button
+                    onClick={() => {
+                      if (createCouponPolicy()) {
+                        createNewCoupon()
+                          .then((response) => {
+                            if (response) {
+                              const coupon: CouponProps = response.data
+                              coupons.push(coupon)
+                              setCoupons(coupons)
+                            }
+                          })
+                          .catch((error) => console.log(error))
+                          .finally(() => {
+                            setModal({
+                              createModal: false,
+                              detailsModal: false,
+                            })
+                          })
+                      }
+                    }}
+                  >
+                    Salvar
+                  </Modal.Button>
+                </Modal.Footer>
+              </Modal.Root>
             </Table.Top>
             <Table.Content>
               <Table.Header>
@@ -142,7 +235,16 @@ export const Coupons = () => {
                     <Table.Row className="ml-4" persist text={coupon.name} />
                     <Table.Row text={coupon.id?.toString()} />
                     <Table.Row text={coupon.discount.toString()} />
-                    <Table.Button className="!text-start">
+                    <Table.Button
+                      onClick={() => {
+                        setViewCoupon(coupon)
+                        setModal({
+                          createModal: false,
+                          detailsModal: true,
+                        })
+                      }}
+                      className="!text-start"
+                    >
                       Detalhes
                     </Table.Button>
                     <Table.Button
@@ -162,74 +264,47 @@ export const Coupons = () => {
                     >
                       <DeleteForeverIcon className="!fill-red-600 hover:!fill-sky-600 duration-300" />
                     </Table.Button>
-                    <Modal.Root open={open}>
-                      <ModalClose onClick={() => setOpen(!open)} />
-                      <Modal.Header title="Criar produto" />
+                    <Modal.Root open={modal.detailsModal}>
+                      <Modal.Close
+                        onClick={() => {
+                          setModal({
+                            createModal: false,
+                            detailsModal: false,
+                          })
+                        }}
+                      />
+                      <Modal.Header title="Informações do Pagamento" />
                       <Modal.Body>
                         <Modal.Input
+                          title="Nome"
+                          label=""
+                          value={viewCoupon?.name}
+                          disabled
                           variant="outlined"
-                          title="Nome do seu Cupom"
-                          label="Nome"
-                          value={newCoupon?.name}
-                          onChange={(e) => {
-                            if (e.target.value.length > 10) return
-                            setNewCoupon((prevState) => ({
-                              ...prevState,
-                              name: e.target.value.toUpperCase(),
-                            }))
-                          }}
                         />
-                        <Modal.Numeric
-                          title="Defina o desconto do seu Cupom"
-                          value={newCoupon?.discount}
-                          onChange={(e) => {
-                            const number = parseFloat(
-                              e.target.value
-                                .replace(',', '.')
-                                .replace('R$', ''),
-                            )
-                            setNewCoupon((prevState) => ({
-                              ...prevState,
-                              discount: number > 99 ? 1 : number,
-                            }))
-                          }}
+                        <Modal.Text
+                          text={viewCoupon?.expirateAt}
+                          className="text-center !font-light !text-sm !text-red-400"
                         />
-                        <Modal.Numeric
-                          title="Defina em quantos dias seu Cupom expira"
-                          value={newCoupon?.expirateDays}
-                          onChange={(e) => {
-                            const number = parseFloat(
-                              e.target.value
-                                .replace(',', '.')
-                                .replace('R$', ''),
-                            )
-                            setNewCoupon((prevState) => ({
-                              ...prevState,
-                              expirateDays: number > 365 ? 1 : number,
-                            }))
-                          }}
+                        <Modal.Text
+                          text={viewCoupon?.discount + '%'}
+                          className="!font-bold !text-4xl !text-blue-600 text-center"
                         />
+                        <Modal.Footer>
+                          <Modal.Body className="!flex-row justify-center">
+                            <Modal.Button className="!bg-green-600">
+                              Aprovar
+                            </Modal.Button>
+                            <Modal.Button className="!bg-red-600">
+                              Cancelar
+                            </Modal.Button>
+                          </Modal.Body>
+                          <Modal.Text
+                            text={viewCoupon?.serviceId}
+                            className="text-sm !text-zinc-400 text-light"
+                          />
+                        </Modal.Footer>
                       </Modal.Body>
-                      <Modal.Footer>
-                        <Modal.Button
-                          onClick={() => {
-                            if (createCouponPolicy()) {
-                              createNewCoupon()
-                                .then((response) => {
-                                  if (response) {
-                                    const coupon: CouponProps = response.data
-                                    coupons.push(coupon)
-                                    setCoupons(coupons)
-                                  }
-                                })
-                                .catch((error) => console.log(error))
-                                .finally(() => setOpen(false))
-                            }
-                          }}
-                        >
-                          Salvar
-                        </Modal.Button>
-                      </Modal.Footer>
                     </Modal.Root>
                   </Table.Data>
                 ))}
