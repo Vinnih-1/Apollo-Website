@@ -1,5 +1,6 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettingsRounded'
@@ -27,6 +28,10 @@ const Service = () => {
         .catch((error) => console.log(error))
     }
   }, [validation])
+
+  if (validation.loading) {
+    return <Loading />
+  }
 
   return (
     <DashboardLayout>

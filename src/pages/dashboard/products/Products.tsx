@@ -1,5 +1,6 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Loading } from '@/components/Loading/Loading'
 import { Modal } from '@/components/Modal'
 import { ModalClose } from '@/components/Modal/ModalClose'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
@@ -90,6 +91,10 @@ export const Products = () => {
         .catch((error) => console.log(error))
     }
   }, [validation])
+
+  if (validation.loading) {
+    return <Loading />
+  }
 
   return (
     <DashboardLayout>

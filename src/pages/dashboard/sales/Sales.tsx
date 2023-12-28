@@ -1,5 +1,6 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
@@ -30,6 +31,10 @@ export const Sales = () => {
         .catch((error) => console.log(error))
     }
   }, [validation])
+
+  if (validation.loading) {
+    return <Loading />
+  }
 
   return (
     <DashboardLayout>
