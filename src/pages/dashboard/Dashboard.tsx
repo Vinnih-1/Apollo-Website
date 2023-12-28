@@ -1,5 +1,6 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
@@ -10,17 +11,13 @@ import { DashboardLayout, PaymentProps, ServiceProps } from './DashboardLayout'
 
 const Dashboard = () => {
   const validation = useAuth()
-  const serviceUrl = process.env.NEXT_PUBLIC_DASHBOARD_SERVICE as string
-  const paymentUrl = process.env
-    .NEXT_PUBLIC_DASHBOARD_PENDING_PAYMENTS as string
   const [service, setService] = useState<ServiceProps | undefined>()
   const [payments, setPayments] = useState<Array<PaymentProps>>([])
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     if (validation.token !== '') {
       axios
-        .get(serviceUrl, {
+        .get(process.env.NEXT_PUBLIC_DASHBOARD_SERVICE as string, {
           headers: {
             Authorization: 'Bearer ' + validation.token,
           },
@@ -28,11 +25,10 @@ const Dashboard = () => {
         .then((response) => {
           const service = response.data as ServiceProps
           setService(service)
-          setLoading(false)
         })
         .catch((error) => console.log(error))
       axios
-        .get(paymentUrl, {
+        .get(process.env.NEXT_PUBLIC_DASHBOARD_PENDING_PAYMENTS as string, {
           headers: {
             Authorization: 'Bearer ' + validation.token,
           },
@@ -44,6 +40,10 @@ const Dashboard = () => {
         .catch((error) => console.log(error))
     }
   }, [validation])
+
+  if (validation.loading) {
+    return <Loading />
+  }
 
   return (
     <DashboardLayout>
