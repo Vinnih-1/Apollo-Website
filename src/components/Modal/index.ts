@@ -6,6 +6,7 @@ import { ModalHeader } from './ModalHeader'
 import { ModalInput } from './ModalInput'
 import { ModalNumericInput } from './ModalNumericInput'
 import { ModalRoot } from './ModalRoot'
+import { ModalText } from './ModalText'
 
 export const Modal = {
   Root: ModalRoot,
@@ -16,4 +17,5 @@ export const Modal = {
   Input: ModalInput,
   Numeric: ModalNumericInput,
   Button: ModalButton,
+  Text: ModalText,
 }
