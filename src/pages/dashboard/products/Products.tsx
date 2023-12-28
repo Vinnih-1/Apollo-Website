@@ -6,6 +6,7 @@ import { ModalClose } from '@/components/Modal/ModalClose'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
+import DeleteForeverIcon from '@mui/icons-material/DeleteForeverRounded'
 import axios from 'axios'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
@@ -237,6 +238,7 @@ export const Products = () => {
                 <Table.Column text="ID do Produto" />
                 <Table.Column text="Preço do Produto" />
                 <Table.Column text="Informações" className="!text-end pr-8" />
+                <Table.Column text="" />
               </Table.Header>
               {products.length > 0 &&
                 products.map((product, index) => (
@@ -255,6 +257,23 @@ export const Products = () => {
                       className="mr-8"
                     >
                       Detalhes
+                    </Table.Button>
+                    <Table.Button
+                      className="!bg-transparent !text-center !max-w-[24px] !p-0"
+                      onClick={() => {
+                        deleteExistentProduct(product)
+                          .then((response) => {
+                            if (response.status === 200) {
+                              const newProducts = products.filter(
+                                (item) => item.id !== product.id,
+                              )
+                              setProducts(newProducts)
+                            }
+                          })
+                          .catch((error) => console.log(error))
+                      }}
+                    >
+                      <DeleteForeverIcon className="!fill-red-600 hover:!fill-sky-600 duration-300" />
                     </Table.Button>
                     <Modal.Root open={modal.detailsModal}>
                       <Modal.Close
