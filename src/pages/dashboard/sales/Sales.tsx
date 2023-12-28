@@ -1,6 +1,7 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
+import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
@@ -12,6 +13,8 @@ import { DashboardLayout, PaymentProps } from '../DashboardLayout'
 export const Sales = () => {
   const validation = useAuth()
   const [payments, setPayments] = useState<Array<PaymentProps>>([])
+  const [viewPayment, setViewPayment] = useState<PaymentProps>()
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (validation.token !== '') {
@@ -21,7 +24,7 @@ export const Sales = () => {
             Authorization: 'Bearer ' + validation.token,
           },
           params: {
-            status: 'PAYED',
+            status: 'EXPIRED',
           },
         })
         .then((response) => {
@@ -102,7 +105,54 @@ export const Sales = () => {
                     <Table.Row text={payment.productId.toString()} />
                     <Table.Row text={payment.price.toFixed(2)} />
                     <Table.Row text={payment.paymentStatus} />
-                    <Table.Button>Detalhes</Table.Button>
+                    <Table.Button
+                      onClick={() => {
+                        setOpen(!open)
+                        setViewPayment(payment)
+                      }}
+                    >
+                      Detalhes
+                    </Table.Button>
+                    <Modal.Root open={open}>
+                      <Modal.Close onClick={() => setOpen(!open)} />
+                      <Modal.Header title="Informações do Pagamento" />
+                      <Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Comprador"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={viewPayment?.payer}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="ID do Chat"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={viewPayment?.chatId}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Text
+                          text={viewPayment?.paymentStatus}
+                          className="text-center !font-bold !text-lg !text-blue-600"
+                        />
+                        <Modal.Text
+                          text={'R$ ' + viewPayment?.price.toFixed(2)}
+                          className="!font-bold !text-4xl !text-blue-600 text-center"
+                        />
+                        <Modal.Footer>
+                          <Modal.Text
+                            text={viewPayment?.id}
+                            className="text-sm !text-zinc-400 text-light"
+                          />
+                        </Modal.Footer>
+                      </Modal.Body>
+                    </Modal.Root>
                   </Table.Data>
                 ))}
             </Table.Content>

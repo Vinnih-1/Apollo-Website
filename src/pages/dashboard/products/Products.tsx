@@ -284,37 +284,40 @@ export const Products = () => {
                           })
                         }}
                       />
-                      <Modal.Header title="Informações do Pagamento" />
+                      <Modal.Header title="Informações do Produto" />
                       <Modal.Body>
-                        <Modal.Input
-                          title="Nome"
-                          label=""
-                          value={viewProduct?.name}
-                          disabled
-                          variant="outlined"
-                        />
-                        <Modal.Input
-                          title="Descrição do Produto"
-                          label=""
-                          value={viewProduct?.description}
-                          disabled
-                          variant="outlined"
-                        />
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Nome do Produto"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={viewProduct?.name}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Identificador"
+                            className="text-center !font-light !text-xs !text-zinc-400"
+                          />
+                          <Modal.Text
+                            text={viewProduct?.id.toString()}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
                         <Modal.Text
-                          text={viewProduct?.id.toString()}
-                          className="text-center !font-light !text-sm !text-zinc-400"
+                          text={viewProduct?.description}
+                          className="text-center text-zinc-400 text-xs"
                         />
                         <Modal.Text
                           text={'R$ ' + viewProduct?.price.toFixed(2)}
                           className="!font-bold !text-4xl !text-blue-600 text-center"
                         />
-                        <Modal.Footer>
-                          <Modal.Body className="!flex-row justify-center">
-                            <Modal.Button className="!bg-green-600">
-                              Aprovar
-                            </Modal.Button>
+                        <Modal.Footer className="!mt-0">
+                          <Modal.Body className="!flex-row justify-center !mt-0">
                             <Modal.Button className="!bg-red-600">
-                              Cancelar
+                              Deletar
                             </Modal.Button>
                           </Modal.Body>
                           <Modal.Text

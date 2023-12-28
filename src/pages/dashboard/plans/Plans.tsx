@@ -118,34 +118,46 @@ export const Plans = () => {
                       <Modal.Close onClick={() => setOpen(!open)} />
                       <Modal.Header title="Informações do Plano" />
                       <Modal.Body>
-                        <Modal.Input
-                          label="Dono"
-                          title=""
-                          variant="outlined"
-                          disabled
-                          value={selectService?.owner}
-                        />
-                        <Modal.Input
-                          label="ID"
-                          title=""
-                          variant="outlined"
-                          disabled
-                          value={selectService?.id}
-                        />
-                        <Modal.Input
-                          label="Key"
-                          title=""
-                          variant="outlined"
-                          disabled
-                          value={selectService?.serviceKey}
-                        />
-                        <Modal.Footer>
-                          <span className="text-center text-sm text-red-600 text-light">
-                            {selectService?.expirateAt}
-                          </span>
-                          <div className="self-center">
-                            <Modal.Button>Suspender</Modal.Button>
-                          </div>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Dono"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={selectService?.owner}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Chave"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={selectService?.serviceKey}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Data de Expiração"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={selectService?.expirateAt}
+                            className="text-center !font-light !text-sm !text-red-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Footer className="!mt-0">
+                          <Modal.Body className="!flex-row justify-center !mt-0">
+                            <Modal.Button className="!bg-red-600">
+                              Cancelar
+                            </Modal.Button>
+                          </Modal.Body>
+                          <Modal.Text
+                            text={selectService?.id}
+                            className="text-center !font-light !text-sm !text-zinc-400"
+                          />
                         </Modal.Footer>
                       </Modal.Body>
                     </Modal.Root>

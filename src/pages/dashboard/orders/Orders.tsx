@@ -1,6 +1,7 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
+import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
@@ -15,6 +16,8 @@ export const Orders = () => {
   const validation = useAuth()
   const router = useRouter()
   const [orders, setOrders] = useState<Array<PurchaseProps>>([])
+  const [viewOrder, setViewOrder] = useState<PurchaseProps>()
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (validation.token !== '') {
@@ -126,7 +129,62 @@ export const Orders = () => {
                         .toString()
                         .concat(' minuto(s)')}
                     />
-                    <Table.Button>Detalhes</Table.Button>
+                    <Table.Button
+                      onClick={() => {
+                        setViewOrder(order)
+                        setOpen(!open)
+                      }}
+                    >
+                      Detalhes
+                    </Table.Button>
+                    <Modal.Root open={open}>
+                      <Modal.Close onClick={() => setOpen(!open)} />
+                      <Modal.Header title="Informações do Pagamento" />
+                      <Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Comprador"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={order?.payer}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Intenção do Pagamento"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={order?.paymentIntent}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Text
+                          text={order?.paymentStatus}
+                          className="text-center !font-bold !text-lg !text-blue-600"
+                        />
+                        <Modal.Text
+                          text={'R$ ' + order?.price.toFixed(2)}
+                          className="!font-bold !text-4xl !text-blue-600 text-center"
+                        />
+                        <Modal.Footer>
+                          <Modal.Body className="!flex-row justify-center">
+                            <Modal.Button className="!bg-green-600">
+                              Aprovar
+                            </Modal.Button>
+                            <Modal.Button className="!bg-red-600">
+                              Cancelar
+                            </Modal.Button>
+                          </Modal.Body>
+                          <Modal.Text
+                            text={order?.id}
+                            className="text-sm !text-zinc-400 text-light"
+                          />
+                        </Modal.Footer>
+                      </Modal.Body>
+                    </Modal.Root>
                   </Table.Data>
                 ))}
             </Table.Content>

@@ -141,20 +141,26 @@ const Dashboard = () => {
                       <Modal.Close onClick={() => setOpen(!open)} />
                       <Modal.Header title="Informações do Pagamento" />
                       <Modal.Body>
-                        <Modal.Input
-                          title="Comprador"
-                          label=""
-                          value={viewPayment?.payer}
-                          disabled
-                          variant="outlined"
-                        />
-                        <Modal.Input
-                          title="Chat ID"
-                          label=""
-                          value={viewPayment?.chatId}
-                          disabled
-                          variant="outlined"
-                        />
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Comprador"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={viewPayment?.payer}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="ID do Chat"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={viewPayment?.chatId}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
                         <Modal.Text
                           text={viewPayment?.paymentStatus}
                           className="text-center !font-bold !text-lg !text-blue-600"

@@ -273,30 +273,36 @@ export const Coupons = () => {
                           })
                         }}
                       />
-                      <Modal.Header title="Informações do Pagamento" />
+                      <Modal.Header title="Informações do Cupom" />
                       <Modal.Body>
-                        <Modal.Input
-                          title="Nome"
-                          label=""
-                          value={viewCoupon?.name}
-                          disabled
-                          variant="outlined"
-                        />
-                        <Modal.Text
-                          text={viewCoupon?.expirateAt}
-                          className="text-center !font-light !text-sm !text-red-400"
-                        />
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Nome do Cupom"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={viewCoupon?.name}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Data de Expiração"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={viewCoupon?.expirateAt}
+                            className="text-center !font-light !text-sm !text-red-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
                         <Modal.Text
                           text={viewCoupon?.discount + '%'}
                           className="!font-bold !text-4xl !text-blue-600 text-center"
                         />
-                        <Modal.Footer>
-                          <Modal.Body className="!flex-row justify-center">
-                            <Modal.Button className="!bg-green-600">
-                              Aprovar
-                            </Modal.Button>
+                        <Modal.Footer className="!mt-0">
+                          <Modal.Body className="!flex-row justify-center !mt-0">
                             <Modal.Button className="!bg-red-600">
-                              Cancelar
+                              Deletar
                             </Modal.Button>
                           </Modal.Body>
                           <Modal.Text
