@@ -157,7 +157,7 @@ const Dashboard = () => {
                         />
                         <Modal.Text
                           text={viewPayment?.paymentStatus}
-                          className="text-center !font-bold !text-2xl !text-yellow-400"
+                          className="text-center !font-bold !text-lg !text-blue-600"
                         />
                         <Modal.Text
                           text={'R$ ' + viewPayment?.price.toFixed(2)}
