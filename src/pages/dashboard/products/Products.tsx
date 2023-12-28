@@ -11,9 +11,19 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { DashboardLayout, ProductProps } from '../DashboardLayout'
 
+interface ModalProps {
+  createModal: boolean
+  detailsModal: boolean
+}
+
 export const Products = () => {
   const validation = useAuth()
   const [products, setProducts] = useState<Array<ProductProps>>([])
+  const [viewProduct, setViewProduct] = useState<ProductProps>()
+  const [modal, setModal] = useState<ModalProps>({
+    createModal: false,
+    detailsModal: false,
+  })
   const [newProduct, setNewProduct] = useState<ProductProps>({
     id: 0,
     name: '',
@@ -21,7 +31,6 @@ export const Products = () => {
     price: 0,
     serviceId: '',
   })
-  const [open, setOpen] = useState(false)
 
   const createProductPolicy = (product: ProductProps): boolean => {
     if (product.name === '') return false
@@ -32,15 +41,11 @@ export const Products = () => {
   }
 
   const createNewProduct = async () => {
-    const productDTO: ProductProps = {
-      id: 0,
-      name: newProduct.name,
-      description: newProduct.description,
-      price: newProduct.price,
-      serviceId: '',
+    if (!newProduct) {
+      return
     }
 
-    if (!createProductPolicy(productDTO)) {
+    if (!createProductPolicy(newProduct)) {
       console.log('error')
       return
     }
@@ -48,11 +53,9 @@ export const Products = () => {
     return axios.post(
       (process.env.NEXT_PUBLIC_DASHBOARD_PRODUCTS as string) + 'create',
       {
-        id: productDTO.id,
-        name: productDTO.name,
-        description: productDTO.description,
-        price: productDTO.price,
-        serviceId: productDTO.serviceId,
+        name: newProduct.name,
+        description: newProduct.description,
+        price: newProduct.price,
       },
       {
         headers: {
@@ -140,11 +143,25 @@ export const Products = () => {
                 text="Produtos criados por você"
                 className="font-bold text-xl text-blue-600"
               />
-              <Table.Button onClick={() => setOpen(!open)}>
+              <Table.Button
+                onClick={() => {
+                  setModal({
+                    createModal: true,
+                    detailsModal: false,
+                  })
+                }}
+              >
                 Criar produto
               </Table.Button>
-              <Modal.Root open={open}>
-                <ModalClose onClick={() => setOpen(!open)} />
+              <Modal.Root open={modal.createModal}>
+                <ModalClose
+                  onClick={() => {
+                    setModal({
+                      createModal: false,
+                      detailsModal: false,
+                    })
+                  }}
+                />
                 <Modal.Header title="Criar produto" />
                 <Modal.Body>
                   <Modal.Input
@@ -182,7 +199,6 @@ export const Products = () => {
                       const number = parseFloat(
                         e.target.value.replace(',', '.').replace('R$', ''),
                       )
-
                       setNewProduct((prevState) => ({
                         ...prevState,
                         price: number,
@@ -202,7 +218,12 @@ export const Products = () => {
                           }
                         })
                         .catch((error) => console.log(error))
-                        .finally(() => setOpen(false))
+                        .finally(() => {
+                          setModal({
+                            createModal: false,
+                            detailsModal: false,
+                          })
+                        })
                     }}
                   >
                     Salvar
@@ -223,7 +244,67 @@ export const Products = () => {
                     <Table.Row persist text={product.name} className="ml-8" />
                     <Table.Row text={product.id.toString()} />
                     <Table.Row text={product.price.toFixed(2)} />
-                    <Table.Button className="mr-8">Detalhes</Table.Button>
+                    <Table.Button
+                      onClick={() => {
+                        setViewProduct(product)
+                        setModal({
+                          createModal: false,
+                          detailsModal: true,
+                        })
+                      }}
+                      className="mr-8"
+                    >
+                      Detalhes
+                    </Table.Button>
+                    <Modal.Root open={modal.detailsModal}>
+                      <Modal.Close
+                        onClick={() => {
+                          setModal({
+                            createModal: false,
+                            detailsModal: false,
+                          })
+                        }}
+                      />
+                      <Modal.Header title="Informações do Pagamento" />
+                      <Modal.Body>
+                        <Modal.Input
+                          title="Nome"
+                          label=""
+                          value={viewProduct?.name}
+                          disabled
+                          variant="outlined"
+                        />
+                        <Modal.Input
+                          title="Descrição do Produto"
+                          label=""
+                          value={viewProduct?.description}
+                          disabled
+                          variant="outlined"
+                        />
+                        <Modal.Text
+                          text={viewProduct?.id.toString()}
+                          className="text-center !font-light !text-sm !text-zinc-400"
+                        />
+                        <Modal.Text
+                          text={'R$ ' + viewProduct?.price.toFixed(2)}
+                          className="!font-bold !text-4xl !text-blue-600 text-center"
+                        />
+                        <Modal.Footer>
+                          <Modal.Body className="!flex-row justify-center">
+                            <Modal.Button className="!bg-green-600">
+                              Aprovar
+                            </Modal.Button>
+                            <Modal.Button className="!bg-red-600">
+                              Cancelar
+                            </Modal.Button>
+                          </Modal.Body>
+                          <Modal.Text
+                            text={viewProduct?.serviceId}
+                            className="text-sm !text-zinc-400 text-light"
+                          />
+                        </Modal.Footer>
+                      </Modal.Body>
+                    </Modal.Root>
                   </Table.Data>
                 ))}
             </Table.Content>
