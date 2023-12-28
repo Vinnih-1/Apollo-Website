@@ -61,10 +61,10 @@ export const Sidebar = () => {
         className={
           openSidebar
             ? 'bg-zinc-100 w-screen shadow-2xl fixed top-0 h-screen'
-            : 'bg-zinc-200 lg:w-64 shadow-2xl hidden lg:block h-screen'
+            : 'bg-zinc-200 lg:w-64 shadow-2xl hidden sticky top-0 lg:block h-screen'
         }
       >
-        <div className="sticky top-0 flex flex-col h-full overflow-y-auto">
+        <div className="flex flex-col h-screen overflow-y-auto">
           <div className="pt-12">
             <Link href="/">
               <Image
