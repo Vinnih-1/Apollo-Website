@@ -7,7 +7,7 @@ interface TableButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const TableButton = ({ children, ...rest }: TableButtonProps) => {
   return (
-    <td className={twMerge('text-end', rest.className)}>
+    <td className={twMerge(rest.className)}>
       <button
         {...rest}
         className={twMerge(
