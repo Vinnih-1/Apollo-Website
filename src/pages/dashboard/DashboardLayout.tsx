@@ -1,48 +1,50 @@
 import { useAuth } from '@/hooks/useAuth'
-import axios from 'axios'
+import { useService } from '@/hooks/useService'
 import { ReactNode, useEffect, useState } from 'react'
+
+export interface CouponProps {
+  id?: number
+  name: string
+  discount: number
+  usage?: number
+  maxUsage?: number
+  createAt?: string
+  expirateAt?: string
+  enabled?: boolean
+  expirateDays: number
+}
 
 export interface ProductProps {
   id: number
   name: string
   description: string
   price: number
-  serviceId: string
-}
-
-export interface CouponProps {
-  id?: number
-  name: string
-  serviceId?: string
-  discount: number
-  expirateDays: number
-  createAt?: string
-  expirateAt?: string
-  enabled?: boolean
 }
 
 export interface PaymentProps {
   id: string
   payer: string
-  serviceId: string
   chatId: string
   paymentStatus: string
-  paymentIntent: string
-  price: number
-  productId: number
+  externalReference: string
+  createAt: string
+  expirateAt: string
+  product: ProductProps
 }
 
 export interface ServiceProps {
   owner: string
   id: string
   serviceKey: string
-  discordId: string
-  categoryId: string
-  createAt: string
-  expirateAt: string
+  authorizationData: {
+    discordId: string
+    categoryId: string
+  }
   buyers: number
   moneyMoved: number
   products: Array<ProductProps>
+  coupons: Array<CouponProps>
+  payments: Array<PaymentProps>
 }
 
 interface DashboardLayoutProps {
@@ -51,8 +53,7 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const validation = useAuth()
-  const serviceUrl = process.env.NEXT_PUBLIC_DASHBOARD_SERVICE as string
-  const [service, setService] = useState<ServiceProps | undefined>()
+  const service = useService()
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -61,20 +62,9 @@ export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
     }
 
     if (validation.token !== '') {
-      axios
-        .get(serviceUrl, {
-          headers: {
-            Authorization: 'Bearer ' + validation.token,
-          },
-        })
-        .then((response) => {
-          const service = response.data as ServiceProps
-          if (service.id === null) setService(undefined)
-          else setService(service)
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+      if (service.getServiceData === undefined) {
+        service.updateServiceData(validation.token)
+      }
     }
   }, [validation])
 
