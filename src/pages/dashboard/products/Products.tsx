@@ -1,11 +1,13 @@
+'use client'
+
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
-import { Loading } from '@/components/Loading/Loading'
 import { Modal } from '@/components/Modal'
 import { ModalClose } from '@/components/Modal/ModalClose'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
+import { useService } from '@/hooks/useService'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForeverRounded'
 import axios from 'axios'
 import Image from 'next/image'
@@ -19,7 +21,7 @@ interface ModalProps {
 
 export const Products = () => {
   const validation = useAuth()
-  const [products, setProducts] = useState<Array<ProductProps>>([])
+  const service = useService()
   const [viewProduct, setViewProduct] = useState<ProductProps>()
   const [modal, setModal] = useState<ModalProps>({
     createModal: false,
@@ -30,8 +32,13 @@ export const Products = () => {
     name: '',
     description: '',
     price: 0,
-    serviceId: '',
   })
+
+  useEffect(() => {
+    if (validation.token !== '') {
+      service.updateServiceData(validation.token)
+    }
+  }, [validation])
 
   const createProductPolicy = (product: ProductProps): boolean => {
     if (product.name === '') return false
@@ -80,26 +87,6 @@ export const Products = () => {
     )
   }
 
-  useEffect(() => {
-    if (validation.token !== '') {
-      axios
-        .get(process.env.NEXT_PUBLIC_DASHBOARD_PRODUCTS as string, {
-          headers: {
-            Authorization: 'Bearer ' + validation.token,
-          },
-        })
-        .then((response) => {
-          const service = response.data as Array<ProductProps>
-          setProducts(service)
-        })
-        .catch((error) => console.log(error))
-    }
-  }, [validation])
-
-  if (validation.loading) {
-    return <Loading />
-  }
-
   return (
     <DashboardLayout>
       <div className="fixed top-0 z-10 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
@@ -131,7 +118,7 @@ export const Products = () => {
                 Total produtos
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold">
-                {products.length}
+                {service.getServiceData?.products.length}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
@@ -213,9 +200,9 @@ export const Products = () => {
                       createNewProduct()
                         .then((response) => {
                           if (response) {
-                            const product: ProductProps = response.data
-                            products.push(product)
-                            setProducts(products)
+                            if (response.status === 200) {
+                              service.updateServiceData(validation.token)
+                            }
                           }
                         })
                         .catch((error) => console.log(error))
@@ -237,13 +224,13 @@ export const Products = () => {
                 <Table.Column persist text="Nome do Produto" />
                 <Table.Column text="ID do Produto" />
                 <Table.Column text="Preço do Produto" />
-                <Table.Column text="Informações" className="!text-end pr-8" />
+                <Table.Column text="Informações" />
                 <Table.Column text="" />
               </Table.Header>
-              {products.length > 0 &&
-                products.map((product, index) => (
+              {service.getServiceData &&
+                service.getServiceData?.products.map((product, index) => (
                   <Table.Data key={index}>
-                    <Table.Row persist text={product.name} className="ml-8" />
+                    <Table.Row persist text={product.name} />
                     <Table.Row text={product.id.toString()} />
                     <Table.Row text={product.price.toFixed(2)} />
                     <Table.Button
@@ -254,20 +241,16 @@ export const Products = () => {
                           detailsModal: true,
                         })
                       }}
-                      className="mr-8"
                     >
                       Detalhes
                     </Table.Button>
                     <Table.Button
-                      className="!bg-transparent !text-center !max-w-[24px] !p-0"
+                      className="!bg-transparent !text-end !max-w-[24px] !p-0"
                       onClick={() => {
                         deleteExistentProduct(product)
                           .then((response) => {
                             if (response.status === 200) {
-                              const newProducts = products.filter(
-                                (item) => item.id !== product.id,
-                              )
-                              setProducts(newProducts)
+                              service.updateServiceData(validation.token)
                             }
                           })
                           .catch((error) => console.log(error))
@@ -321,7 +304,7 @@ export const Products = () => {
                             </Modal.Button>
                           </Modal.Body>
                           <Modal.Text
-                            text={viewProduct?.serviceId}
+                            text={service.getServiceData?.id}
                             className="text-sm !text-zinc-400 text-light"
                           />
                         </Modal.Footer>
