@@ -5,25 +5,24 @@ import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
-import { PurchaseProps } from '@/hooks/usePurchase'
 import axios from 'axios'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { DashboardLayout } from '../DashboardLayout'
+import { DashboardLayout, PaymentProps } from '../DashboardLayout'
 
 export const Orders = () => {
   const validation = useAuth()
   const router = useRouter()
-  const [orders, setOrders] = useState<Array<PurchaseProps>>([])
-  const [viewOrder, setViewOrder] = useState<PurchaseProps>()
+  const [orders, setOrders] = useState<Array<PaymentProps>>([])
+  const [viewOrder, setViewOrder] = useState<PaymentProps>()
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (validation.token !== '') {
       axios
         .get(
-          (process.env.NEXT_PUBLIC_DASHBOARD_ORDERS as string) + 'payments',
+          (process.env.NEXT_PUBLIC_DASHBOARD_SERVICE as string) + 'payments',
           {
             headers: {
               Authorization: 'Bearer ' + validation.token,
@@ -35,7 +34,7 @@ export const Orders = () => {
         )
         .then((response) => {
           const { content } = response.data
-          setOrders(content as Array<PurchaseProps>)
+          setOrders(content as Array<PaymentProps>)
         })
     }
   }, [validation])
@@ -44,7 +43,7 @@ export const Orders = () => {
     return <Loading />
   }
 
-  const acceptOrder = async (order: PurchaseProps) => {
+  const acceptOrder = async (order: PaymentProps) => {
     return axios.get(
       (process.env.NEXT_PUBLIC_DASHBOARD_ORDERS as string) + 'authorize',
       {
@@ -151,27 +150,22 @@ export const Orders = () => {
                             className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
                           />
                         </Modal.Body>
-                        <Modal.Body className="!gap-0">
-                          <Modal.Text
-                            text="Intenção do Pagamento"
-                            className="text-center text-zinc-400 text-xs"
-                          />
-                          <Modal.Text
-                            text={order?.paymentIntent}
-                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
-                          />
-                        </Modal.Body>
                         <Modal.Text
                           text={order?.paymentStatus}
                           className="text-center !font-bold !text-lg !text-blue-600"
                         />
                         <Modal.Text
-                          text={'R$ ' + order?.price.toFixed(2)}
+                          text={'R$ ' + order?.product.price.toFixed(2)}
                           className="!font-bold !text-4xl !text-blue-600 text-center"
                         />
                         <Modal.Footer>
                           <Modal.Body className="!flex-row justify-center">
-                            <Modal.Button className="!bg-green-600">
+                            <Modal.Button
+                              onClick={() => {
+                                acceptOrder(order).finally(() => setOpen(false))
+                              }}
+                              className="!bg-green-600"
+                            >
                               Aprovar
                             </Modal.Button>
                             <Modal.Button className="!bg-red-600">
