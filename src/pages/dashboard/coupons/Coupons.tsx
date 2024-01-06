@@ -6,6 +6,7 @@ import { ModalClose } from '@/components/Modal/ModalClose'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
+import { useService } from '@/hooks/useService'
 import DeleteForeverIcon from '@mui/icons-material/DeleteForeverRounded'
 import axios from 'axios'
 import Image from 'next/image'
@@ -19,7 +20,7 @@ interface ModalProps {
 
 export const Coupons = () => {
   const validation = useAuth()
-  const [coupons, setCoupons] = useState<Array<CouponProps>>([])
+  const service = useService()
   const [viewCoupon, setViewCoupon] = useState<CouponProps>()
   const [newCoupon, setNewCoupon] = useState<CouponProps>({
     name: '',
@@ -71,17 +72,7 @@ export const Coupons = () => {
 
   useEffect(() => {
     if (validation.token !== '') {
-      axios
-        .get(process.env.NEXT_PUBLIC_DASHBOARD_COUPONS as string, {
-          headers: {
-            Authorization: 'Bearer ' + validation.token,
-          },
-        })
-        .then((response) => {
-          const payments = response.data as Array<CouponProps>
-          setCoupons(payments)
-        })
-        .catch((error) => console.log(error))
+      service.updateServiceData(validation.token)
     }
   }, [validation])
 
@@ -120,7 +111,7 @@ export const Coupons = () => {
                 Total cupons
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold">
-                {coupons.length}
+                {0}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
@@ -201,9 +192,7 @@ export const Coupons = () => {
                         createNewCoupon()
                           .then((response) => {
                             if (response) {
-                              const coupon: CouponProps = response.data
-                              coupons.push(coupon)
-                              setCoupons(coupons)
+                              service.updateServiceData(validation.token)
                             }
                           })
                           .catch((error) => console.log(error))
@@ -229,10 +218,10 @@ export const Coupons = () => {
                 <Table.Column text="Informações" />
                 <Table.Column text="" />
               </Table.Header>
-              {coupons.length > 0 &&
-                coupons.map((coupon, index) => (
+              {service.getServiceData &&
+                service.getServiceData?.coupons.map((coupon, index) => (
                   <Table.Data key={index}>
-                    <Table.Row className="ml-4" persist text={coupon.name} />
+                    <Table.Row persist text={coupon.name} />
                     <Table.Row text={coupon.id?.toString()} />
                     <Table.Row text={coupon.discount.toString()} />
                     <Table.Button
@@ -243,20 +232,16 @@ export const Coupons = () => {
                           detailsModal: true,
                         })
                       }}
-                      className="!text-start"
                     >
                       Detalhes
                     </Table.Button>
                     <Table.Button
-                      className="!bg-transparent !text-center !max-w-[24px] !p-0"
+                      className="!bg-transparent !text-end !max-w-[24px] !p-0"
                       onClick={() => {
                         handleDeleteCoupon(coupon)
                           .then((response) => {
                             if (response.status === 200) {
-                              const newCoupons = coupons.filter(
-                                (item) => item.id !== coupon.id,
-                              )
-                              setCoupons(newCoupons)
+                              service.updateServiceData(validation.token)
                             }
                           })
                           .catch((error) => console.log(error))
@@ -306,7 +291,7 @@ export const Coupons = () => {
                             </Modal.Button>
                           </Modal.Body>
                           <Modal.Text
-                            text={viewCoupon?.serviceId}
+                            text={service.getServiceData?.id}
                             className="text-sm !text-zinc-400 text-light"
                           />
                         </Modal.Footer>
