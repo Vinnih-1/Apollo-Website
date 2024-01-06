@@ -108,7 +108,7 @@ const Dashboard = () => {
             <Table.Content>
               <Table.Header>
                 <Table.Column persist text="Comprador" />
-                <Table.Column text="ID do Produto" />
+                <Table.Column text="Nome do Produto" />
                 <Table.Column text="Preço" />
                 <Table.Column text="Informações" />
               </Table.Header>
@@ -116,7 +116,7 @@ const Dashboard = () => {
                 service.getServiceData?.payments.map((payment, index) => (
                   <Table.Data key={index}>
                     <Table.Row persist text={payment.payer} />
-                    <Table.Row text={payment.id} />
+                    <Table.Row text={payment.product.name} />
                     <Table.Row text={payment.product.price.toFixed(2)} />
                     <Table.Button
                       onClick={() => {
