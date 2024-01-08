@@ -29,6 +29,11 @@ export const useAuth = (): ValidationProps => {
     const token = localStorage.getItem('token')
 
     if (!token) {
+      setValidation((prevState) => ({
+        ...prevState,
+        loading: false,
+        success: true,
+      }))
       return
     }
 
