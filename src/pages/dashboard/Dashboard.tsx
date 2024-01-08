@@ -163,17 +163,9 @@ const Dashboard = () => {
                   className="!font-bold !text-4xl !text-blue-600 text-center"
                 />
                 <Modal.Footer>
-                  <Modal.Body className="!flex-row justify-center">
-                    <Modal.Button className="!bg-green-600">
-                      Aprovar
-                    </Modal.Button>
-                    <Modal.Button className="!bg-red-600">
-                      Cancelar
-                    </Modal.Button>
-                  </Modal.Body>
                   <Modal.Text
                     text={viewPayment?.id}
-                    className="text-sm !text-zinc-400 text-light"
+                    className="text-xs text-center !text-zinc-400 text-light"
                   />
                 </Modal.Footer>
               </Modal.Body>
