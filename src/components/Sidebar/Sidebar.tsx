@@ -184,7 +184,7 @@ export const Sidebar = () => {
           </div>
           <div className="flex justify-center items-end h-full">
             <span className="text-sm text-zinc-400 font-light mb-4">
-              v2023.1222.0
+              v2024.0109.0
             </span>
           </div>
         </div>
