@@ -4,8 +4,16 @@ import { ServiceProps } from '@/pages/dashboard/DashboardLayout'
 import axios from 'axios'
 import { useState } from 'react'
 
-export const useService = () => {
+interface ServiceParamProps {
+  page?: number
+  status?: string
+}
+
+export const useService = (props: ServiceParamProps) => {
   const [service, setService] = useState<ServiceProps>()
+  const defaultParams = props || {
+    page: 0,
+  }
 
   const updateServiceData = (token: string) => {
     axios
@@ -14,7 +22,8 @@ export const useService = () => {
           Authorization: 'Bearer ' + token,
         },
         params: {
-          page: 0,
+          page: defaultParams.page,
+          status: defaultParams.status,
         },
       })
       .then((response) => {
