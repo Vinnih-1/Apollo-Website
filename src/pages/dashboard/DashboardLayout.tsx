@@ -53,7 +53,7 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   const validation = useAuth()
-  const service = useService()
+  const service = useService({})
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {

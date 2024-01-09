@@ -21,7 +21,7 @@ interface ModalProps {
 
 export const Products = () => {
   const validation = useAuth()
-  const service = useService()
+  const service = useService({})
   const [viewProduct, setViewProduct] = useState<ProductProps>()
   const [modal, setModal] = useState<ModalProps>({
     createModal: false,

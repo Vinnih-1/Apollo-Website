@@ -12,11 +12,12 @@ import { DashboardLayout, PaymentProps } from './DashboardLayout'
 
 const Dashboard = () => {
   const validation = useAuth()
-  const service = useService()
+  const service = useService({})
   const [viewPayment, setViewPayment] = useState<PaymentProps>()
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
+    console.log()
     if (validation.token !== '') {
       service.updateServiceData(validation.token)
     }

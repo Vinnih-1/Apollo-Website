@@ -15,7 +15,7 @@ import { DashboardLayout } from '../DashboardLayout'
 
 const Service = () => {
   const validation = useAuth()
-  const service = useService()
+  const service = useService({})
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
