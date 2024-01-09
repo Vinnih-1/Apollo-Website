@@ -84,7 +84,7 @@ export const Sales = () => {
                 <Table.Column text="ID do Produto" />
                 <Table.Column text="Preço" />
                 <Table.Column text="Status" />
-                <Table.Column text="Informações" className="!text-end mr-2" />
+                <Table.Column text="Informações" />
               </Table.Header>
               {service.getServiceData?.payments &&
                 service.getServiceData.payments.map((payment, index) => (
