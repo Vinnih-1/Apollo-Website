@@ -5,33 +5,20 @@ import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
-import axios from 'axios'
+import { useService } from '@/hooks/useService'
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { DashboardLayout, PaymentProps } from '../DashboardLayout'
 
 export const Sales = () => {
   const validation = useAuth()
-  const [payments, setPayments] = useState<Array<PaymentProps>>([])
+  const service = useService({ status: 'PAYED' })
   const [viewPayment, setViewPayment] = useState<PaymentProps>()
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (validation.token !== '') {
-      axios
-        .get(process.env.NEXT_PUBLIC_DASHBOARD_APPROVED_PAYMENTS as string, {
-          headers: {
-            Authorization: 'Bearer ' + validation.token,
-          },
-          params: {
-            status: 'EXPIRED',
-          },
-        })
-        .then((response) => {
-          const payments = response.data as Array<PaymentProps>
-          setPayments(payments)
-        })
-        .catch((error) => console.log(error))
+      service.updateServiceData(validation.token)
     }
   }, [validation])
 
@@ -71,9 +58,10 @@ export const Sales = () => {
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold overflow-hidden">
                 R${' '}
-                {payments
+                {service.getServiceData?.payments
                   .reduce(
-                    (accumulator, payment) => accumulator + payment.price,
+                    (accumulator, payment) =>
+                      accumulator + payment.product.price,
                     0,
                   )
                   .toFixed(2)}
@@ -98,12 +86,12 @@ export const Sales = () => {
                 <Table.Column text="Status" />
                 <Table.Column text="Informações" className="!text-end mr-2" />
               </Table.Header>
-              {payments.length > 0 &&
-                payments.map((payment, index) => (
+              {service.getServiceData?.payments &&
+                service.getServiceData.payments.map((payment, index) => (
                   <Table.Data key={index}>
                     <Table.Row persist text={payment.payer} />
-                    <Table.Row text={payment.productId.toString()} />
-                    <Table.Row text={payment.price.toFixed(2)} />
+                    <Table.Row text={payment.product.id.toString()} />
+                    <Table.Row text={payment.product.price.toFixed(2)} />
                     <Table.Row text={payment.paymentStatus} />
                     <Table.Button
                       onClick={() => {
@@ -142,7 +130,7 @@ export const Sales = () => {
                           className="text-center !font-bold !text-lg !text-blue-600"
                         />
                         <Modal.Text
-                          text={'R$ ' + viewPayment?.price.toFixed(2)}
+                          text={'R$ ' + viewPayment?.product.price.toFixed(2)}
                           className="!font-bold !text-4xl !text-blue-600 text-center"
                         />
                         <Modal.Footer>
