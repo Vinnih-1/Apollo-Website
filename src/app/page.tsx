@@ -6,7 +6,6 @@ import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import mercadoPagoIcon from '@/assets/component-icons/mercadopago-icon.svg'
 import planIcon from '@/assets/component-icons/professionalplan-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
-import trialIcon from '@/assets/component-icons/trialplan-icon.svg'
 import circleIcon from '@/assets/statistic-icons/circle-icon.svg'
 import cloudIcon from '@/assets/statistic-icons/cloud-icon.svg'
 import dataIcon from '@/assets/statistic-icons/data-icon.svg'
@@ -87,7 +86,12 @@ export default function Home() {
               os cupons que você quiser com poucos cliques! Tenha acesso ao
               painel onde poderá gerenciar seu Serviço.
             </p>
-            <button className="py-4 md:py-2 bg-blue-600 rounded w-40 text-white text-xs mt-5 md:mt-0">
+            <button
+              className="py-4 md:py-2 bg-blue-600 rounded w-40 text-white text-xs mt-5 md:mt-0"
+              onClick={() => {
+                router.push('/register')
+              }}
+            >
               Contratar Plano
             </button>
           </div>
@@ -167,45 +171,6 @@ export default function Home() {
             </p>
           </div>
           <div className="flex flex-col md:flex-row md:justify-center items-center overflow-hidden gap-8 py-8">
-            {/* Card */}
-            <div className="flex flex-col items-center bg-zinc-100 w-72 h-96 rounded-xl shadow-xl">
-              <div className="py-5">
-                {/* Header Card */}
-                <div className="flex flex-col items-center mt-4">
-                  <Image
-                    src={trialIcon}
-                    width={60}
-                    height={60}
-                    alt="Icone do plano de testes"
-                  />
-                  <h1 className="font-bold text-sm text-black mt-2">
-                    Fazer uma Amostra Grátis
-                  </h1>
-                </div>
-
-                {/* Body Card */}
-                <div className="mt-4">
-                  <div className="text-center">
-                    <span className="text-xs font-normal text-zinc-500 block">
-                      Planos a partir de
-                    </span>
-                    <span className="inline-block text-lg font-bold text-zinc-400">
-                      R$ 00,00
-                    </span>
-                    <span className="inline text-xs font-bold">/mensal</span>
-                    <p className="text-sm font-light text-zinc-400 mx-4 mt-4">
-                      Para garantir ao usuário que este é um bom negócio, nós
-                      damos um plano gratuito para o mesmo poder testar nossas
-                      funcionalidades.
-                    </p>
-                    <button className="py-4 md:py-2 bg-zinc-400 rounded w-40 text-white text-xs mt-5 md:mt-8">
-                      Contratar Amostra Grátis
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Card */}
             <div className="flex flex-col items-center bg-zinc-100 w-72 h-96 rounded-xl shadow-xl">
               <div className="py-5">
                 {/* Header Card */}
@@ -228,7 +193,7 @@ export default function Home() {
                       Planos a partir de
                     </span>
                     <span className="inline-block text-lg font-bold text-blue-600">
-                      R$ 29,99
+                      R$ 00,00
                     </span>
                     <span className="inline text-xs font-bold">/mensal</span>
                     <p className="text-sm font-light text-zinc-400 mx-4 mt-4">
@@ -239,7 +204,7 @@ export default function Home() {
                     <button
                       className="py-4 md:py-2 bg-blue-600 rounded w-40 text-white text-xs mt-5 md:mt-8"
                       onClick={() => {
-                        router.push('/purchase/professional')
+                        router.push('/register')
                       }}
                     >
                       Contratar este plano
