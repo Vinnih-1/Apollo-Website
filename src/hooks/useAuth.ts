@@ -1,4 +1,4 @@
-import axios, { AxiosError } from 'axios'
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 
 export interface ValidationProps {
@@ -27,7 +27,6 @@ export const useAuth = (): ValidationProps => {
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-
     if (!token) {
       setValidation((prevState) => ({
         ...prevState,
@@ -47,24 +46,22 @@ export const useAuth = (): ValidationProps => {
           return
         }
 
-        setValidation({
-          email,
-          token,
-          isValid: valid as boolean,
-          authorities,
-          loading: false,
-          success: true,
-        })
-      })
-      .catch((error: AxiosError) => {
-        let success = false
-        if (error.response) {
-          success = true
+        if (response.status === 200) {
+          setValidation({
+            email,
+            token,
+            isValid: valid as boolean,
+            authorities,
+            loading: false,
+            success: true,
+          })
         }
+      })
+      .catch(() => {
         setValidation((prevState) => ({
           ...prevState,
           loading: false,
-          success,
+          success: false,
         }))
       })
   }, [])
