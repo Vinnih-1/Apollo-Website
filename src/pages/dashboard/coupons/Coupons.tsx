@@ -20,7 +20,7 @@ interface ModalProps {
 
 export const Coupons = () => {
   const validation = useAuth()
-  const service = useService()
+  const service = useService({})
   const [viewCoupon, setViewCoupon] = useState<CouponProps>()
   const [newCoupon, setNewCoupon] = useState<CouponProps>({
     name: '',
@@ -111,7 +111,7 @@ export const Coupons = () => {
                 Total cupons
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold">
-                {0}
+                {service.getServiceData?.coupons.length}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
