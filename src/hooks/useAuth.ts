@@ -1,5 +1,4 @@
-import axios, { AxiosError } from 'axios'
-import { useRouter } from 'next/navigation'
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 
 export interface ValidationProps {
@@ -9,11 +8,16 @@ export interface ValidationProps {
   isValid: boolean
   loading: boolean
   success: boolean
+  logout: () => void
 }
 
 export const useAuth = (): ValidationProps => {
-  const router = useRouter()
   const validateUrl = process.env.NEXT_PUBLIC_AUTH_VALIDATE as string
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+  }
+
   const [validation, setValidation] = useState<ValidationProps>({
     email: '',
     token: '',
@@ -21,21 +25,17 @@ export const useAuth = (): ValidationProps => {
     authorities: [],
     loading: true,
     success: false,
+    logout: handleLogout,
   })
-
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-    if (window.location.pathname === '/') return
-    router.push('/login')
-  }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
-    const location = window.location.pathname
-
     if (!token) {
-      if (location === '/' || location === '/register') return
-      router.push('/login')
+      setValidation((prevState) => ({
+        ...prevState,
+        loading: false,
+        success: true,
+      }))
       return
     }
 
@@ -49,24 +49,23 @@ export const useAuth = (): ValidationProps => {
           return
         }
 
-        setValidation({
-          email,
-          token,
-          isValid: valid as boolean,
-          authorities,
-          loading: false,
-          success: true,
-        })
-      })
-      .catch((error: AxiosError) => {
-        let success = false
-        if (error.response) {
-          success = true
+        if (response.status === 200) {
+          setValidation({
+            email,
+            token,
+            isValid: valid as boolean,
+            authorities,
+            loading: false,
+            success: true,
+            logout: handleLogout,
+          })
         }
+      })
+      .catch(() => {
         setValidation((prevState) => ({
           ...prevState,
           loading: false,
-          success,
+          success: false,
         }))
       })
   }, [])

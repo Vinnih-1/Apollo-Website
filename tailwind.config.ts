@@ -16,6 +16,10 @@ const config: Config = {
       colors: {
         bgFrosted: '#E8E9F3',
       },
+      borderRadius: {
+        xll: '60px',
+        large: '36px',
+      },
     },
   },
   plugins: [],

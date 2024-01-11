@@ -6,14 +6,12 @@ import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import mercadoPagoIcon from '@/assets/component-icons/mercadopago-icon.svg'
 import planIcon from '@/assets/component-icons/professionalplan-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
-import trialIcon from '@/assets/component-icons/trialplan-icon.svg'
 import circleIcon from '@/assets/statistic-icons/circle-icon.svg'
 import cloudIcon from '@/assets/statistic-icons/cloud-icon.svg'
 import dataIcon from '@/assets/statistic-icons/data-icon.svg'
 import statisticIcon from '@/assets/statistic-icons/statistic-icon.svg'
 import supportIcon from '@/assets/statistic-icons/support-icon.svg'
 import { Footer } from '@/components/Footer/Footer'
-import { Loading } from '@/components/Loading/Loading'
 import { Navbar } from '@/components/Navbar'
 import { useAuth } from '@/hooks/useAuth'
 import MenuIcon from '@mui/icons-material/Menu'
@@ -22,32 +20,10 @@ import PersonIcon from '@mui/icons-material/Person'
 import StorefrontIcon from '@mui/icons-material/Storefront'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
 
 export default function Home() {
   const validation = useAuth()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    if (!validation.loading) {
-      setLoading(false)
-    }
-  }, [validation])
-
-  if (loading) {
-    return <Loading />
-  }
-
-  if (!validation.success) {
-    return (
-      <div className="flex justify-center items-center w-screen h-screen">
-        <span className="text-sm text-zinc-400 font-light">
-          Algo de errado não está certo...
-        </span>
-      </div>
-    )
-  }
 
   return (
     <div>
@@ -96,7 +72,11 @@ export default function Home() {
               }
             }}
           />
-          <Navbar.Toggler icon={MenuIcon} id="openDropdown" />
+          <Navbar.Toggler
+            isAuthenticated={validation.isValid}
+            icon={MenuIcon}
+            id="openDropdown"
+          />
         </Navbar.Actions>
       </Navbar.Root>
       <div>
@@ -110,7 +90,12 @@ export default function Home() {
               os cupons que você quiser com poucos cliques! Tenha acesso ao
               painel onde poderá gerenciar seu Serviço.
             </p>
-            <button className="py-4 md:py-2 bg-blue-600 rounded w-40 text-white text-xs mt-5 md:mt-0">
+            <button
+              className="py-4 md:py-2 bg-blue-600 rounded w-40 text-white text-xs mt-5 md:mt-0"
+              onClick={() => {
+                router.push('/register')
+              }}
+            >
               Contratar Plano
             </button>
           </div>
@@ -190,45 +175,6 @@ export default function Home() {
             </p>
           </div>
           <div className="flex flex-col md:flex-row md:justify-center items-center overflow-hidden gap-8 py-8">
-            {/* Card */}
-            <div className="flex flex-col items-center bg-zinc-100 w-72 h-96 rounded-xl shadow-xl">
-              <div className="py-5">
-                {/* Header Card */}
-                <div className="flex flex-col items-center mt-4">
-                  <Image
-                    src={trialIcon}
-                    width={60}
-                    height={60}
-                    alt="Icone do plano de testes"
-                  />
-                  <h1 className="font-bold text-sm text-black mt-2">
-                    Fazer uma Amostra Grátis
-                  </h1>
-                </div>
-
-                {/* Body Card */}
-                <div className="mt-4">
-                  <div className="text-center">
-                    <span className="text-xs font-normal text-zinc-500 block">
-                      Planos a partir de
-                    </span>
-                    <span className="inline-block text-lg font-bold text-zinc-400">
-                      R$ 00,00
-                    </span>
-                    <span className="inline text-xs font-bold">/mensal</span>
-                    <p className="text-sm font-light text-zinc-400 mx-4 mt-4">
-                      Para garantir ao usuário que este é um bom negócio, nós
-                      damos um plano gratuito para o mesmo poder testar nossas
-                      funcionalidades.
-                    </p>
-                    <button className="py-4 md:py-2 bg-zinc-400 rounded w-40 text-white text-xs mt-5 md:mt-8">
-                      Contratar Amostra Grátis
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Card */}
             <div className="flex flex-col items-center bg-zinc-100 w-72 h-96 rounded-xl shadow-xl">
               <div className="py-5">
                 {/* Header Card */}
@@ -251,7 +197,7 @@ export default function Home() {
                       Planos a partir de
                     </span>
                     <span className="inline-block text-lg font-bold text-blue-600">
-                      R$ 29,99
+                      R$ 00,00
                     </span>
                     <span className="inline text-xs font-bold">/mensal</span>
                     <p className="text-sm font-light text-zinc-400 mx-4 mt-4">
@@ -262,7 +208,7 @@ export default function Home() {
                     <button
                       className="py-4 md:py-2 bg-blue-600 rounded w-40 text-white text-xs mt-5 md:mt-8"
                       onClick={() => {
-                        router.push('/purchase/professional')
+                        router.push('/register')
                       }}
                     >
                       Contratar este plano
@@ -289,17 +235,17 @@ export default function Home() {
             <span className="text-zinc-600 font-bold">
               USUÁRIOS CADASTRADOS
             </span>
-            <span className="text-blue-600 font-bold">194</span>
+            <span className="text-blue-600 font-bold">0</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <StorefrontIcon className="font-bold text-blue-600 text-3xl" />
             <span className="text-zinc-600 font-bold">VENDAS EFETUADAS</span>
-            <span className="text-blue-600 font-bold">847</span>
+            <span className="text-blue-600 font-bold">0</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <PaidIcon className="font-bold text-blue-600 text-3xl" />
             <span className="text-zinc-600 font-bold">TOTAL MOVIMENTADO</span>
-            <span className="text-blue-600 font-bold">R$ 13.843,22</span>
+            <span className="text-blue-600 font-bold">R$ 0</span>
           </div>
         </div>
       </div>

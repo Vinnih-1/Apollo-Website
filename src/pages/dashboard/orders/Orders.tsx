@@ -1,42 +1,60 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
 import { Loading } from '@/components/Loading/Loading'
+import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
-import { PurchaseProps } from '@/hooks/usePurchase'
 import axios from 'axios'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
+import { DashboardLayout, PaymentProps } from '../DashboardLayout'
 
 export const Orders = () => {
   const validation = useAuth()
   const router = useRouter()
-  const [loading, setLoading] = useState(true)
-  const [orders, setOrders] = useState<Array<PurchaseProps>>([])
-  const ordersUrl = process.env.NEXT_PUBLIC_DASHBOARD_ORDERS as string
+  const [orders, setOrders] = useState<Array<PaymentProps>>([])
+  const [viewOrder, setViewOrder] = useState<PaymentProps>()
+  const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (validation.token !== '') {
       axios
-        .get(ordersUrl, {
-          headers: {
-            Authorization: 'Bearer ' + validation.token,
+        .get(
+          (process.env.NEXT_PUBLIC_DASHBOARD_SERVICE as string) + 'payments',
+          {
+            headers: {
+              Authorization: 'Bearer ' + validation.token,
+            },
+            params: {
+              page: 0,
+            },
           },
-          params: {
-            page: 0,
-          },
-        })
+        )
         .then((response) => {
           const { content } = response.data
-          setOrders(content as Array<PurchaseProps>)
-          setLoading(false)
+          setOrders(content as Array<PaymentProps>)
         })
     }
   }, [validation])
 
-  if (loading) {
+  if (validation.loading) {
     return <Loading />
+  }
+
+  const acceptOrder = async (order: PaymentProps) => {
+    return axios.get(
+      (process.env.NEXT_PUBLIC_DASHBOARD_ORDERS as string) + 'authorize',
+      {
+        headers: {
+          Authorization: 'Bearer ' + validation.token,
+        },
+        params: {
+          externalReference: order.externalReference,
+        },
+      },
+    )
   }
 
   if (!validation.authorities.some((path) => path.authority === 'ROLE_ADMIN')) {
@@ -45,8 +63,8 @@ export const Orders = () => {
   }
 
   return (
-    <div>
-      <div className="fixed top-0 z-10 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
+    <DashboardLayout>
+      <div className="fixed top-0 z-20 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
         <a href="#" className="flex gap-4">
           <Image
             src={discordSmallIcon}
@@ -82,70 +100,92 @@ export const Orders = () => {
               </span>
             </div>
           </div>
-          <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
-            <div className="flex items-center justify-between p-8">
-              <h1 className="font-bold text-xl text-blue-600">
-                Lista de pedidos pendentes
-              </h1>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex bg-zinc-200 py-2 px-4">
-                <span className="grow max-w-[20%]">Email</span>
-                <span className="grow hidden md:block max-w-[30%]">
-                  Referência externa
-                </span>
-                <span className="grow hidden md:block max-w-[29%]">
-                  Expira em:
-                </span>
-              </div>
-              <div>
-                {orders.length > 0 ? (
-                  orders.map((order) => (
-                    <div
-                      key={order.id}
-                      className="flex items-center bg-zinc-100 p-4"
+          <Table.Root>
+            <Table.Top>
+              <Table.Text
+                text="Lista de pedidos pendentes"
+                className="font-bold text-xl text-blue-600"
+              />
+            </Table.Top>
+            <Table.Content>
+              <Table.Header>
+                <Table.Column persist text="Email" />
+                <Table.Column text="Referência externa" />
+                <Table.Column text="Expira em:" />
+                <Table.Column text="Informações" className="!text-end mr-2" />
+              </Table.Header>
+              {orders.length > 0 &&
+                orders.map((order, index) => (
+                  <Table.Data key={index}>
+                    <Table.Row persist text={order.payer} />
+                    <Table.Row text={order.externalReference} />
+                    <Table.Row
+                      text={Math.ceil(
+                        (new Date(order.expirateAt).getTime() -
+                          new Date().getTime()) /
+                          (1000 * 60),
+                      )
+                        .toString()
+                        .concat(' minuto(s)')}
+                    />
+                    <Table.Button
+                      onClick={() => {
+                        setViewOrder(order)
+                        setOpen(!open)
+                      }}
                     >
-                      <span className="grow text-zinc-700 text-sm max-w-[70%] md:max-w-[20%] overflow-hidden truncate">
-                        {order.payer}
-                      </span>
-                      <span className="grow text-zinc-700 md:block hidden text-sm max-w-[30%] overflow-hidden truncate">
-                        {order.externalReference}
-                      </span>
-                      <span className="grow text-zinc-700 md:block hidden text-sm max-w-[29%] overflow-hidden truncate">
-                        {Math.ceil(
-                          (new Date(order.expirateAt).getTime() -
-                            new Date().getTime()) /
-                            (1000 * 60),
-                        )}{' '}
-                        minuto(s)
-                      </span>
-                      <button className="p-2 px-4 md:block hidden bg-green-600 rounded-lg text-zinc-200 text-sm mx-auto">
-                        Aprovar pedido
-                      </button>
-                      <button className="p-2 px-4 md:hidden bg-blue-600 rounded-lg text-zinc-200 text-sm mx-auto">
-                        Detalhes
-                      </button>
-                    </div>
-                  ))
-                ) : (
-                  <div className="flex items-center bg-zinc-100 p-4">
-                    <span className="grow text-zinc-700 text-sm max-w-[70%] md:max-w-[33%] overflow-hidden truncate">
-                      -
-                    </span>
-                    <span className="grow text-zinc-700 md:block hidden text-sm max-w-[23%] overflow-hidden truncate">
-                      -
-                    </span>
-                    <span className="grow text-zinc-700 md:block hidden text-sm max-w-[23%] overflow-hidden truncate">
-                      -
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+                      Detalhes
+                    </Table.Button>
+                    <Modal.Root open={open}>
+                      <Modal.Close onClick={() => setOpen(!open)} />
+                      <Modal.Header title="Informações do Pagamento" />
+                      <Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Comprador"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={order?.payer}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Text
+                          text={order?.paymentStatus}
+                          className="text-center !font-bold !text-lg !text-blue-600"
+                        />
+                        <Modal.Text
+                          text={'R$ ' + order?.product.price.toFixed(2)}
+                          className="!font-bold !text-4xl !text-blue-600 text-center"
+                        />
+                        <Modal.Footer>
+                          <Modal.Body className="!flex-row justify-center">
+                            <Modal.Button
+                              onClick={() => {
+                                acceptOrder(order).finally(() => setOpen(false))
+                              }}
+                              className="!bg-green-600"
+                            >
+                              Aprovar
+                            </Modal.Button>
+                            <Modal.Button className="!bg-red-600">
+                              Cancelar
+                            </Modal.Button>
+                          </Modal.Body>
+                          <Modal.Text
+                            text={order?.id}
+                            className="text-sm !text-zinc-400 text-light"
+                          />
+                        </Modal.Footer>
+                      </Modal.Body>
+                    </Modal.Root>
+                  </Table.Data>
+                ))}
+            </Table.Content>
+          </Table.Root>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }
 

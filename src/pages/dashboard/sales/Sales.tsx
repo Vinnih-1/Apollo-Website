@@ -1,16 +1,34 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Loading } from '@/components/Loading/Loading'
+import { Modal } from '@/components/Modal'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
+import { Table } from '@/components/Table'
 import { useAuth } from '@/hooks/useAuth'
-import CheckCircleIcon from '@mui/icons-material/CheckCircleRounded'
+import { useService } from '@/hooks/useService'
 import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { DashboardLayout, PaymentProps } from '../DashboardLayout'
 
 export const Sales = () => {
   const validation = useAuth()
+  const service = useService({ status: 'PAYED' })
+  const [viewPayment, setViewPayment] = useState<PaymentProps>()
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (validation.token !== '') {
+      service.updateServiceData(validation.token)
+    }
+  }, [validation])
+
+  if (validation.loading) {
+    return <Loading />
+  }
 
   return (
-    <div>
-      <div className="fixed top-0 z-10 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
+    <DashboardLayout>
+      <div className="fixed top-0 z-20 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
         <a href="#" className="flex gap-4">
           <Image
             src={discordSmallIcon}
@@ -39,56 +57,97 @@ export const Sales = () => {
                 Dinheiro movimentado
               </h1>
               <span className="ml-8 mt-4 text-blue-600 text-4xl font-bold overflow-hidden">
-                R$ 483,51
+                R${' '}
+                {service.getServiceData?.payments
+                  .reduce(
+                    (accumulator, payment) =>
+                      accumulator + payment.product.price,
+                    0,
+                  )
+                  .toFixed(2)}
               </span>
               <span className="ml-8 mt-2 block text-zinc-400 text-xs font-light">
                 Há 3 min
               </span>
             </div>
           </div>
-          <div className="bg-zinc-100 max-w-5xl mx-auto rounded-lg shadow-xl mt-16 border border-zinc-200">
-            <div className="flex items-center justify-between p-8">
-              <h1 className="font-bold text-xl text-blue-600">
-                Vendas efetuadas com êxito
-              </h1>
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center bg-zinc-200 py-2 px-4">
-                <span className="grow md:max-w-[26%]">Comprador</span>
-                <span className="grow hidden md:block max-w-[26%]">
-                  ID do Produto
-                </span>
-                <span className="grow hidden md:block max-w-[26%]">
-                  Chat do Pagamento
-                </span>
-                <span className="grow hidden md:block max-w-[10%]">Preço</span>
-                <span className="grow hidden md:block max-w-[10%] text-center">
-                  Status
-                </span>
-              </div>
-              <div className="flex items-center bg-zinc-100 p-4">
-                <span className="grow md:max-w-[26%] text-zinc-500">
-                  viniciusalb10@gmail.com
-                </span>
-                <span className="grow hidden md:block max-w-[26%] overflow-hidden truncate text-zinc-400">
-                  503942222222
-                </span>
-                <span className="grow hidden md:block max-w-[26%] text-zinc-400">
-                  1174052975963029578
-                </span>
-                <span className="grow hidden md:block max-w-[10%] text-blue-600 font-bold">
-                  R$ 5,00
-                </span>
-                <CheckCircleIcon className="grow hidden md:block max-w-[10%] fill-green-400 text-2xl mx-auto" />
-                <button className="p-2 px-4 bg-blue-600 rounded-lg text-zinc-200 text-sm md:hidden mx-auto">
-                  Informações
-                </button>
-              </div>
-            </div>
-          </div>
+          <Table.Root>
+            <Table.Top>
+              <Table.Text
+                text="Vendas efetuadas com êxito"
+                className="font-bold text-xl text-blue-600"
+              />
+            </Table.Top>
+            <Table.Content>
+              <Table.Header>
+                <Table.Column persist text="Comprador" />
+                <Table.Column text="ID do Produto" />
+                <Table.Column text="Preço" />
+                <Table.Column text="Status" />
+                <Table.Column text="Informações" />
+              </Table.Header>
+              {service.getServiceData?.payments &&
+                service.getServiceData.payments.map((payment, index) => (
+                  <Table.Data key={index}>
+                    <Table.Row persist text={payment.payer} />
+                    <Table.Row text={payment.product.id.toString()} />
+                    <Table.Row text={payment.product.price.toFixed(2)} />
+                    <Table.Row text={payment.paymentStatus} />
+                    <Table.Button
+                      onClick={() => {
+                        setOpen(!open)
+                        setViewPayment(payment)
+                      }}
+                    >
+                      Detalhes
+                    </Table.Button>
+                    <Modal.Root open={open}>
+                      <Modal.Close onClick={() => setOpen(!open)} />
+                      <Modal.Header title="Informações do Pagamento" />
+                      <Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="Comprador"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={viewPayment?.payer}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Body className="!gap-0">
+                          <Modal.Text
+                            text="ID do Chat"
+                            className="text-center text-zinc-400 text-xs"
+                          />
+                          <Modal.Text
+                            text={viewPayment?.chatId}
+                            className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
+                          />
+                        </Modal.Body>
+                        <Modal.Text
+                          text={viewPayment?.paymentStatus}
+                          className="text-center !font-bold !text-lg !text-blue-600"
+                        />
+                        <Modal.Text
+                          text={'R$ ' + viewPayment?.product.price.toFixed(2)}
+                          className="!font-bold !text-4xl !text-blue-600 text-center"
+                        />
+                        <Modal.Footer>
+                          <Modal.Text
+                            text={viewPayment?.id}
+                            className="text-sm !text-zinc-400 text-light"
+                          />
+                        </Modal.Footer>
+                      </Modal.Body>
+                    </Modal.Root>
+                  </Table.Data>
+                ))}
+            </Table.Content>
+          </Table.Root>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }
 

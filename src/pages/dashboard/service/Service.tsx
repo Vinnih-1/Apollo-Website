@@ -1,16 +1,42 @@
 import discordSmallIcon from '@/assets/component-icons/discordsmall-icon.svg'
 import termsSmallIcon from '@/assets/component-icons/terms-icon.svg'
+import { Loading } from '@/components/Loading/Loading'
 import { Sidebar } from '@/components/Sidebar/Sidebar'
 import { useAuth } from '@/hooks/useAuth'
+import { useService } from '@/hooks/useService'
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettingsRounded'
+import ArrowCircleUpRoundedIcon from '@mui/icons-material/ArrowCircleUpRounded'
+import ContentCopyRoundedIcon from '@mui/icons-material/ContentCopyRounded'
+import copy from 'clipboard-copy'
 import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { DashboardLayout } from '../DashboardLayout'
 
 const Service = () => {
   const validation = useAuth()
+  const service = useService({})
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (validation.token !== '') {
+      service.updateServiceData(validation.token)
+    }
+  }, [validation])
+
+  if (validation.loading) {
+    return <Loading />
+  }
+
+  const containerClass = `flex flex-col items-center absolute w-full h-96 bg-blue-600 gap-6 duration-500 ease-out ${
+    open
+      ? 'transform -translate-y-0 rounded-t-large'
+      : 'transform translate-y-80 rounded-t-xll'
+  }`
 
   return (
-    <div>
-      <div className="fixed top-0 z-10 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
+    <DashboardLayout>
+      <div className="fixed top-0 z-20 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
         <a href="#" className="flex gap-4">
           <Image
             src={discordSmallIcon}
@@ -34,92 +60,78 @@ const Service = () => {
         <Sidebar />
         <div className="w-full bg-zinc-100">
           <div className="flex">
-            <div className="flex flex-col items-center mx-auto">
-              <AdminPanelSettingsIcon className="text-8xl fill-blue-600 mt-16" />
-              <h1 className="text-lg font-bold text-blue-600">
-                Informações de Segurança
-              </h1>
-              <span className="text-red-300 font-light text-center text-sm mt-4">
-                (NÃO COMPARTILHE ESTAS INFORMAÇÕES COM NINGUÉM)
-              </span>
-              <span className="inline text-zinc-400 font-light text-sm mt-4">
-                Autorizado:{' '}
-                <span className="inline text-green-600 font-bold text-lg">
-                  SIM
-                </span>
-              </span>
-              <span className="text-zinc-400 text-sm font-light mt-4">
-                Expira em:{' '}
-                <span className="text-red-600 font-light text-sm">
-                  30/12/2023 às 23:59
-                </span>
-              </span>
-              <button className="py-3 bg-green-600 rounded w-40 text-white text-sm mt-4 hover:bg-green-400 duration-300">
-                Renovar serviço
-              </button>
-              <div className="flex items-center justify-center flex-wrap bg-zinc-100 gap-12 mt-8 rounded-lg">
-                <div className="flex flex-col items-center justify-between mx-8">
-                  <div>
-                    <span className="text-zinc-400 font-light text-xs">
-                      ID do seu Serviço
-                    </span>
-                    <div className="w-48 p-3 border border-green-600 rounded-lg overflow-hidden truncate cursor-pointer">
-                      <span className="text-sm text-green-200 font-light">
-                        eb99fa0b-5b3c-4058-834e-4861b6d43f31
-                      </span>
-                    </div>
-                  </div>
-                  <div>
-                    <span className="text-zinc-400 font-light text-xs">
-                      Senha do seu Serviço
-                    </span>
-                    <div className="w-48 p-3 border text-center border-green-600 rounded-lg overflow-hidden truncate cursor-pointer">
-                      <span className="text-sm text-green-200 font-light">
-                        vpx-eek-j5a
-                      </span>
-                    </div>
-                  </div>
+            <div className="flex flex-col h-screen justify-center items-center mx-auto">
+              <div className="relative flex flex-col items-center overflow-hidden w-96 h-96 mt-12 rounded-lg bg-zinc-200">
+                <AdminPanelSettingsIcon className="!text-8xl !fill-blue-600" />
+                <div className="flex flex-col items-center gap-6 mt-4">
+                  <span className="text-md font-normal text-zinc-700">
+                    Convide nosso bot para efetuar suas vendas
+                  </span>
+                  <Link
+                    target="_blank"
+                    href={process.env.NEXT_PUBLIC_DISCORD_INVITE as string}
+                    className="bg-blue-600 text-white text-center text-sm font-light w-36 py-2 rounded-large"
+                  >
+                    Convidar
+                  </Link>
+                  <span className="text-zinc-400 text-xs mt-12">
+                    Lembre-se de nunca compartilhar estas informações com
+                    ninguém
+                  </span>
                 </div>
-                <div className="flex flex-col items-center justify-between mx-8">
+                <div className={containerClass}>
                   <div>
-                    <span className="text-zinc-400 font-light text-xs">
-                      Email do Serviço
-                    </span>
-                    <div className="w-48 p-3 border border-green-600 text-center rounded-lg overflow-hidden truncate cursor-pointer">
-                      <span className="text-sm text-green-200 font-light">
-                        viniciusalb10@gmail.com
-                      </span>
-                    </div>
+                    <button
+                      type="button"
+                      className="p-2"
+                      onClick={() => setOpen(!open)}
+                    >
+                      <ArrowCircleUpRoundedIcon className="!text-4xl !fill-white animate-bounce" />
+                    </button>
                   </div>
-                  <div>
-                    <span className="text-zinc-400 font-light text-xs">
-                      Discord Cadastrado
-                    </span>
-                    <div className="w-48 p-3 border text-center border-green-600 rounded-lg overflow-hidden truncate cursor-pointer">
-                      <span className="text-sm text-green-200 font-light">
-                        1148878334831374397
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex justify-center mx-8">
-                  <div>
-                    <span className="text-zinc-400 font-light text-xs">
-                      Categoria Cadastrada
-                    </span>
-                    <div className="w-48 p-3 border border-green-600 text-center rounded-lg overflow-hidden truncate cursor-pointer">
-                      <span className="text-sm text-green-200 font-light">
-                        1180553865800728640
-                      </span>
-                    </div>
-                  </div>
+                  <span className="text-2xl text-white font-bold">
+                    Chave do Serviço
+                  </span>
+                  <button
+                    type="button"
+                    className="border border-white text-xs text-white p-2 rounded-lg flex items-center gap-2 transition-colors duration-300"
+                    onClick={async (event) => {
+                      await copy(service.getServiceData?.serviceKey as string)
+                      const target = event.target as HTMLButtonElement
+                      target.classList.add('bg-green-400')
+                      setTimeout(() => {
+                        target.classList.remove('bg-green-400')
+                      }, 500)
+                    }}
+                  >
+                    {service.getServiceData?.serviceKey}
+                    <ContentCopyRoundedIcon />
+                  </button>
+                  <span className="text-2xl text-white font-bold">
+                    ID do Serviço
+                  </span>
+                  <button
+                    type="button"
+                    className="border border-white text-xs text-white p-2 rounded-lg flex items-center gap-2 transition-colors duration-300"
+                    onClick={async (event) => {
+                      await copy(service.getServiceData?.id as string)
+                      const target = event.target as HTMLButtonElement
+                      target.classList.add('bg-green-400')
+                      setTimeout(() => {
+                        target.classList.remove('bg-green-400')
+                      }, 500)
+                    }}
+                  >
+                    {service.getServiceData?.id}
+                    <ContentCopyRoundedIcon />
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   )
 }
 
