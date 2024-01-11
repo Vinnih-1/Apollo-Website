@@ -231,17 +231,17 @@ export default function Home() {
             <span className="text-zinc-600 font-bold">
               USUÁRIOS CADASTRADOS
             </span>
-            <span className="text-blue-600 font-bold">194</span>
+            <span className="text-blue-600 font-bold">0</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <StorefrontIcon className="font-bold text-blue-600 text-3xl" />
             <span className="text-zinc-600 font-bold">VENDAS EFETUADAS</span>
-            <span className="text-blue-600 font-bold">847</span>
+            <span className="text-blue-600 font-bold">0</span>
           </div>
           <div className="flex flex-col items-center gap-2">
             <PaidIcon className="font-bold text-blue-600 text-3xl" />
             <span className="text-zinc-600 font-bold">TOTAL MOVIMENTADO</span>
-            <span className="text-blue-600 font-bold">R$ 13.843,22</span>
+            <span className="text-blue-600 font-bold">R$ 0</span>
           </div>
         </div>
       </div>
