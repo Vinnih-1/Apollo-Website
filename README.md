@@ -1,36 +1,32 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+![apollo-isologo](https://github.com/Vinnih-1/Apollo/assets/59892753/dc6dad52-3a8f-43b0-90f8-26296012e6e2)
 
-## Getting Started
+O projeto tem a intenção de automatizar o sistema de pagamentos pelo Discord, utilizando da API do Mercado Pago. O projeto foi criado para ser inicialmente pago, porém com o decorrer do tempo, decidi deixá-lo gratuito e open-source.
 
-First, run the development server:
+Projeto back-end separado em 5 microsserviços, contendo eles:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- [Eureka](https://github.com/Vinnih-1/Apollo/tree/develop/ApolloEureka)
+- [Gateway](https://github.com/Vinnih-1/Apollo/tree/develop/Gateway)
+- [Authentication](https://github.com/Vinnih-1/Apollo/tree/develop/Authentication)
+- [Discord](https://github.com/Vinnih-1/Apollo/tree/develop/Discord)
+- [Service](https://github.com/Vinnih-1/Apollo/tree/develop/Service)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Todos os microsserviços estão disponíveis no repositório back-end, basta [clicar aqui](https://github.com/Vinnih-1/Apollo)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Página              | Permissão    | Autenticação Requerida |
+|---------------------|--------------|---------------|
+| /                   | USER         | NÃO           |
+| /login              | USER         | NÃO           |
+| /register           | USER         | NÃO           |
+| /dashboard          | USER         | SIM           |
+| /dashboard/products | USER         | SIM           |
+| /dashboard/coupons  | USER         | SIM           |
+| /dashboard/sales    | USER         | SIM           |
+| /dashboard/service  | USER         | SIM           |
+| /dashboard/users    | ADMIN        | SIM           |
+| /dashboard/plans    | ADMIN        | SIM           |
+| /dashboard/orders   | ADMIN        | SIM           |
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Após o usuário se cadastrar e se autenticar, ele terá acesso a Dashboard, onde poderá gerenciar seus produtos e cupons.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+O projeto tem o domínio registrado apollodiscord.com, porém não há recursos para mantê-lo de pé. Então decidi continuar o desenvolvimento apenas para aprendizado.
+Ainda em fase de desenvolvimento, qualquer pull request será bem-vindo.
