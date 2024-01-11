@@ -3,15 +3,21 @@ import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings'
 import HandshakeIcon from '@mui/icons-material/Handshake'
 import HomeIcon from '@mui/icons-material/Home'
 import PersonAddIcon from '@mui/icons-material/PersonAdd'
+import SpaceDashboardRoundedIcon from '@mui/icons-material/SpaceDashboardRounded'
 import SupportAgentIcon from '@mui/icons-material/SupportAgent'
 import { ButtonHTMLAttributes, ElementType, useEffect, useState } from 'react'
 import { Navbar } from '.'
 
 interface NavbarTogglerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   icon: ElementType
+  isAuthenticated: boolean
 }
 
-export const NavbarToggler = ({ icon: Icon, ...rest }: NavbarTogglerProps) => {
+export const NavbarToggler = ({
+  icon: Icon,
+  isAuthenticated,
+  ...rest
+}: NavbarTogglerProps) => {
   const [dropdownOpen, setDropdownOpen] = useState(false)
 
   useEffect(() => {
@@ -77,22 +83,35 @@ export const NavbarToggler = ({ icon: Icon, ...rest }: NavbarTogglerProps) => {
             description="Acesse nosso canal de suporte"
           />
         </Navbar.Dropdown>
-        <Navbar.Dropdown>
-          <Navbar.DropdownIcon icon={PersonAddIcon} />
-          <Navbar.DropdownItem
-            title="Registrar"
-            url="/register"
-            description="Caso ainda não tenha uma conta"
-          />
-        </Navbar.Dropdown>
-        <Navbar.Dropdown>
-          <Navbar.DropdownIcon icon={AdminPanelSettingsIcon} />
-          <Navbar.DropdownItem
-            title="Autenticar"
-            url="/login"
-            description="Para ter acesso ao seu serviço"
-          />
-        </Navbar.Dropdown>
+        {isAuthenticated ? (
+          <Navbar.Dropdown>
+            <Navbar.DropdownIcon icon={SpaceDashboardRoundedIcon} />
+            <Navbar.DropdownItem
+              title="Dashboard"
+              url="/dashboard"
+              description="Gerencie seu plano com poucos cliques"
+            />
+          </Navbar.Dropdown>
+        ) : (
+          <>
+            <Navbar.Dropdown>
+              <Navbar.DropdownIcon icon={PersonAddIcon} />
+              <Navbar.DropdownItem
+                title="Registrar"
+                url="/register"
+                description="Caso ainda não tenha uma conta"
+              />
+            </Navbar.Dropdown>
+            <Navbar.Dropdown>
+              <Navbar.DropdownIcon icon={AdminPanelSettingsIcon} />
+              <Navbar.DropdownItem
+                title="Autenticar"
+                url="/login"
+                description="Para ter acesso ao seu serviço"
+              />
+            </Navbar.Dropdown>
+          </>
+        )}
       </Navbar.DropdownRoot>
     </div>
   )
