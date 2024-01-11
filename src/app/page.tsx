@@ -72,7 +72,11 @@ export default function Home() {
               }
             }}
           />
-          <Navbar.Toggler icon={MenuIcon} id="openDropdown" />
+          <Navbar.Toggler
+            isAuthenticated={validation.isValid}
+            icon={MenuIcon}
+            id="openDropdown"
+          />
         </Navbar.Actions>
       </Navbar.Root>
       <div>
