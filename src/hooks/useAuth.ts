@@ -8,10 +8,16 @@ export interface ValidationProps {
   isValid: boolean
   loading: boolean
   success: boolean
+  logout: () => void
 }
 
 export const useAuth = (): ValidationProps => {
   const validateUrl = process.env.NEXT_PUBLIC_AUTH_VALIDATE as string
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+  }
+
   const [validation, setValidation] = useState<ValidationProps>({
     email: '',
     token: '',
@@ -19,11 +25,8 @@ export const useAuth = (): ValidationProps => {
     authorities: [],
     loading: true,
     success: false,
+    logout: handleLogout,
   })
-
-  const handleLogout = () => {
-    localStorage.removeItem('token')
-  }
 
   useEffect(() => {
     const token = localStorage.getItem('token')
@@ -54,6 +57,7 @@ export const useAuth = (): ValidationProps => {
             authorities,
             loading: false,
             success: true,
+            logout: handleLogout,
           })
         }
       })
