@@ -80,7 +80,12 @@ export const Sidebar = () => {
             </Link>
           </div>
           <div className="flex flex-col ml-4 mt-16 justify-center divide-y divide-zinc-400">
-            <div className="flex items-center gap-4 py-4">
+            <button
+              className="flex items-center gap-4 py-4 hover:brightness-50 duration-300"
+              onClick={() => {
+                router.push('/dashboard')
+              }}
+            >
               <HomeIcon
                 className={
                   location === 'dashboard'
@@ -88,11 +93,14 @@ export const Sidebar = () => {
                     : '!fill-zinc-600 text-3xl'
                 }
               />
-              <Link href="/dashboard" className="text-zinc-400">
-                Dashboard
-              </Link>
-            </div>
-            <div className="flex items-center gap-4 py-4">
+              <span className="text-zinc-400">Dashboard</span>
+            </button>
+            <button
+              className="flex items-center gap-4 py-4 hover:brightness-50 duration-300"
+              onClick={() => {
+                router.push('/dashboard/products')
+              }}
+            >
               <InventoryIcon
                 className={
                   location.match('dashboard/products')
@@ -100,11 +108,14 @@ export const Sidebar = () => {
                     : '!fill-zinc-600 text-3xl'
                 }
               />
-              <Link href="/dashboard/products" className="text-zinc-400">
-                Produtos
-              </Link>
-            </div>
-            <div className="flex items-center gap-4 py-4">
+              <span className="text-zinc-400">Produtos</span>
+            </button>
+            <button
+              className="flex items-center gap-4 py-4 hover:brightness-50 duration-300"
+              onClick={() => {
+                router.push('/dashboard/coupons')
+              }}
+            >
               <LoyaltyIcon
                 className={
                   location.match('dashboard/coupons')
@@ -112,11 +123,14 @@ export const Sidebar = () => {
                     : '!fill-zinc-600 text-3xl'
                 }
               />
-              <Link href="/dashboard/coupons" className="text-zinc-400">
-                Cupons
-              </Link>
-            </div>
-            <div className="flex items-center gap-4 py-4">
+              <span className="text-zinc-400">Cupons</span>
+            </button>
+            <button
+              className="flex items-center gap-4 py-4 hover:brightness-50 duration-300"
+              onClick={() => {
+                router.push('/dashboard/sales')
+              }}
+            >
               <ReceiptIcon
                 className={
                   location.match('dashboard/sales')
@@ -124,11 +138,14 @@ export const Sidebar = () => {
                     : '!fill-zinc-600 text-3xl'
                 }
               />
-              <Link href="/dashboard/sales" className="text-zinc-400">
-                Vendas
-              </Link>
-            </div>
-            <div className="flex items-center gap-4 py-4">
+              <span className="text-zinc-400">Vendas</span>
+            </button>
+            <button
+              className="flex items-center gap-4 py-4 hover:brightness-50 duration-300"
+              onClick={() => {
+                router.push('/dashboard/service')
+              }}
+            >
               <PrivacyTipIcon
                 className={
                   location.match('dashboard/service')
@@ -136,12 +153,63 @@ export const Sidebar = () => {
                     : '!fill-zinc-600 text-3xl'
                 }
               />
-              <Link href="/dashboard/service" className="text-zinc-400">
-                Segurança
-              </Link>
-            </div>
+              <span className="text-zinc-400">Segurança</span>
+            </button>
+            {validation.authorities.some(
+              (auth) => auth.authority === 'ROLE_ADMIN',
+            ) ? (
+              <>
+                <button
+                  className="flex items-center gap-4 py-4 hover:brightness-50 duration-300"
+                  onClick={() => {
+                    router.push('/dashboard/users')
+                  }}
+                >
+                  <SupervisorAccountIcon
+                    className={
+                      location.match('dashboard/users')
+                        ? '!fill-blue-600 text-3xl'
+                        : '!fill-zinc-600 text-3xl'
+                    }
+                  />
+                  <span className="text-zinc-400">Usuários</span>
+                </button>
+                <button
+                  className="flex items-center gap-4 py-4 hover:brightness-50 duration-300"
+                  onClick={() => {
+                    router.push('/dashboard/plans')
+                  }}
+                >
+                  <AssignmentIcon
+                    className={
+                      location.match('dashboard/plans')
+                        ? '!fill-blue-600 text-3xl'
+                        : '!fill-zinc-600 text-3xl'
+                    }
+                  />
+                  <span className="text-zinc-400">Planos</span>
+                </button>
+                <button
+                  className="flex items-center gap-4 py-4 hover:brightness-50 duration-300"
+                  onClick={() => {
+                    router.push('/dashboard/orders')
+                  }}
+                >
+                  <ViewListIcon
+                    className={
+                      location.match('dashboard/orders')
+                        ? '!fill-blue-600 text-3xl'
+                        : '!fill-zinc-600 text-3xl'
+                    }
+                  />
+                  <span className="text-zinc-400">Pedidos</span>
+                </button>
+              </>
+            ) : (
+              <></>
+            )}
             <button
-              className="flex items-center gap-4 py-4"
+              className="flex items-center gap-4 py-4 hover:brightness-50 duration-300"
               onClick={() => {
                 router.replace('/')
                 validation.logout()
@@ -156,50 +224,6 @@ export const Sidebar = () => {
               />
               <span className="text-zinc-400">Sair</span>
             </button>
-            {validation.authorities.some(
-              (auth) => auth.authority === 'ROLE_ADMIN',
-            ) ? (
-              <>
-                <div className="flex items-center gap-4 py-4">
-                  <SupervisorAccountIcon
-                    className={
-                      location.match('dashboard/users')
-                        ? '!fill-blue-600 text-3xl'
-                        : '!fill-zinc-600 text-3xl'
-                    }
-                  />
-                  <Link href="/dashboard/users" className="text-zinc-400">
-                    Usuários
-                  </Link>
-                </div>
-                <div className="flex items-center gap-4 py-4">
-                  <AssignmentIcon
-                    className={
-                      location.match('dashboard/plans')
-                        ? '!fill-blue-600 text-3xl'
-                        : '!fill-zinc-600 text-3xl'
-                    }
-                  />
-                  <Link href="/dashboard/plans" className="text-zinc-400">
-                    Planos
-                  </Link>
-                </div>
-                <div className="flex items-center gap-4 py-4">
-                  <ViewListIcon
-                    className={
-                      location.match('dashboard/orders')
-                        ? '!fill-blue-600 text-3xl'
-                        : '!fill-zinc-600 text-3xl'
-                    }
-                  />
-                  <Link href="/dashboard/orders" className="text-zinc-400">
-                    Pedidos
-                  </Link>
-                </div>
-              </>
-            ) : (
-              <></>
-            )}
           </div>
           <div className="flex justify-center items-end h-full">
             <span className="text-sm text-zinc-400 font-light mb-4">
