@@ -29,7 +29,7 @@ const Dashboard = () => {
 
   return (
     <DashboardLayout>
-      <div className="fixed top-0 z-10 lg:static flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
+      <div className="fixed top-0 z-20 lg:static flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
         <a href="#" className="flex gap-4">
           <Image
             src={discordSmallIcon}

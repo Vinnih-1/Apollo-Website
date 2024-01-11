@@ -50,7 +50,7 @@ export const Plans = () => {
 
   return (
     <DashboardLayout>
-      <div className="fixed top-0 z-10 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
+      <div className="fixed top-0 z-20 flex justify-between bg-sky-700 w-full py-2 px-5 md:px-20">
         <a href="#" className="flex gap-4">
           <Image
             src={discordSmallIcon}
@@ -95,17 +95,17 @@ export const Plans = () => {
             </Table.Top>
             <Table.Content>
               <Table.Header>
-                <Table.Column persist text="ID do Plano" />
+                <Table.Column persist text="Dono" />
                 <Table.Column text="Service Key" />
-                <Table.Column text="Expira em:" />
-                <Table.Column text="Informações" className="!text-end mr-2" />
+                <Table.Column text="Identificador" />
+                <Table.Column text="Informações" />
               </Table.Header>
               {services.length > 0 &&
                 services.map((service, index) => (
                   <Table.Data key={index}>
-                    <Table.Row persist text={service.id} />
+                    <Table.Row persist text={service.owner} />
                     <Table.Row text={service.serviceKey} />
-                    <Table.Row text={service.expirateAt} />
+                    <Table.Row text={service.id} />
                     <Table.Button
                       onClick={() => {
                         setSelectService(service)
@@ -136,16 +136,6 @@ export const Plans = () => {
                           <Modal.Text
                             text={selectService?.serviceKey}
                             className="text-center !font-light !text-sm !text-zinc-400 p-4 rounded-lg border border-zinc-200"
-                          />
-                        </Modal.Body>
-                        <Modal.Body className="!gap-0">
-                          <Modal.Text
-                            text="Data de Expiração"
-                            className="text-center text-zinc-400 text-xs"
-                          />
-                          <Modal.Text
-                            text={selectService?.expirateAt}
-                            className="text-center !font-light !text-sm !text-red-400 p-4 rounded-lg border border-zinc-200"
                           />
                         </Modal.Body>
                         <Modal.Footer className="!mt-0">
