@@ -5,6 +5,7 @@ import AssignmentIcon from '@mui/icons-material/AssignmentRounded'
 import CloseIcon from '@mui/icons-material/CloseRounded'
 import HomeIcon from '@mui/icons-material/HomeRounded'
 import InventoryIcon from '@mui/icons-material/InventoryRounded'
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
 import LoyaltyIcon from '@mui/icons-material/LoyaltyRounded'
 import MenuIcon from '@mui/icons-material/MenuRounded'
 import PrivacyTipIcon from '@mui/icons-material/PrivacyTipRounded'
@@ -13,12 +14,14 @@ import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccountRounded'
 import ViewListIcon from '@mui/icons-material/ViewListRounded'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 
 export const Sidebar = () => {
   const [location, setLocation] = useState('')
   const [openSidebar, setOpenSidebar] = useState(false)
   const validation = useAuth()
+  const router = useRouter()
 
   useEffect(() => {
     const location = window.location.pathname.substring(1)
@@ -28,7 +31,7 @@ export const Sidebar = () => {
   const sidebarMenuButton = () => {
     return (
       <button
-        className="overflow-hidden fixed top-4 left-1 w-auto lg:w-0 visible lg:invisible lg:ml-0 lg:mr-0 lg:mt-0 lg:p-0 mt-8 p-4"
+        className="overflow-hidden fixed top-4 z-10 left-1 w-auto lg:w-0 visible lg:invisible lg:ml-0 lg:mr-0 lg:mt-0 lg:p-0 mt-8 p-4"
         onClick={() => {
           if (openSidebar) {
             closeSidebarMenu()
@@ -60,8 +63,8 @@ export const Sidebar = () => {
       <div
         className={
           openSidebar
-            ? 'bg-zinc-100 w-screen shadow-2xl fixed top-0 h-screen'
-            : 'bg-zinc-200 lg:w-64 shadow-2xl hidden sticky top-0 lg:block h-screen'
+            ? 'bg-zinc-100 w-screen shadow-2xl fixed top-0 z-10 h-screen'
+            : 'bg-zinc-200 lg:w-64 shadow-2xl hidden sticky z-10 top-0 lg:block h-screen'
         }
       >
         <div className="flex flex-col h-screen overflow-y-auto">
@@ -137,6 +140,22 @@ export const Sidebar = () => {
                 Segurança
               </Link>
             </div>
+            <button
+              className="flex items-center gap-4 py-4"
+              onClick={() => {
+                router.replace('/')
+                validation.logout()
+              }}
+            >
+              <LogoutRoundedIcon
+                className={
+                  location.match('dashboard/service')
+                    ? '!fill-blue-600 text-3xl'
+                    : '!fill-zinc-600 text-3xl'
+                }
+              />
+              <span className="text-zinc-400">Sair</span>
+            </button>
             {validation.authorities.some(
               (auth) => auth.authority === 'ROLE_ADMIN',
             ) ? (
